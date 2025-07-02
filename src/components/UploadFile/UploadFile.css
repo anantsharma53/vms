@@ -1,0 +1,44 @@
+.image-box {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: start;
+    /* gap: 20px; */
+  }
+  
+  
+  .file-upload {
+    border: 1px solid #131212;
+    padding: 10px;
+    margin-bottom: 15px;
+    position: relative;
+    height: 350px;
+  }
+  
+  .file-upload label {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+
+  
+  .file-upload img {
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    padding: 5px;
+  }
+  
+  .file-upload div {
+    margin-top: 10px;
+  }
+  
+  .img-file-preview{
+    height: 200px;
+    max-width: 150px;
+    margin-top: 10px;
+  }
+  .sig-file-preview {
+    height: 150px;
+    max-width: 200px;
+    margin-top: 10px;
+  }
+  

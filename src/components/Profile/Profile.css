@@ -1,0 +1,108 @@
+/* Global Styles */
+
+  
+  h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  /* Profile Form Container */
+
+  .profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-container h1 {
+    font-size: 2rem;
+  }
+  
+  /* Form Input Styles */
+  input[type="text"],
+  input[type="email"],
+  input[type="checkbox"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  
+  input[type="text"]:disabled,
+  input[type="email"]:disabled {
+    background-color: #f0f0f0;
+  }
+  
+  input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+  }
+  
+  label {
+    font-weight: bold;
+    color: #555;
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  /* Button Styles */
+  button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #3498db;
+    color: white;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #2980b9;
+  }
+  
+  button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+  }
+  
+  button[type="button"] {
+    background-color: #e74c3c;
+  }
+  
+  button[type="button"]:hover {
+    background-color: #c0392b;
+  }
+  
+  button[type="submit"] {
+    background-color: #a2aaa6;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #0c0c0c;
+  }
+  
+  /* Form Layout */
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Responsive Styling */
+  @media (max-width: 768px) {
+    .profile-container {
+      padding: 20px;
+    }
+  
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+  

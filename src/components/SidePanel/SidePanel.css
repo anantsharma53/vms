@@ -1,0 +1,45 @@
+/* styles.css (or use styled-components) */
+.side-panel {
+    width: 250px;
+    height: 100%;
+    background-color: #c4cac6;
+    color: #0f0f0f;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  nav li {
+    cursor: pointer;
+    padding: 10px;
+    border-bottom: 1px solid #34495e;
+    width: 100%;
+    text-align: center;
+    transition: background-color 0.3s;
+  }
+  
+  nav li:last-child {
+    border-bottom: none;
+  }
+  
+  nav li:hover {
+    background-color: #34495e;
+  }
+  
+  /* Optional: Add styles for selected menu item */
+  nav li.active {
+    background-color: #2980b9;
+  }
+  
+  /* Optional: Add styles for hover effect on selected menu item */
+  nav li.active:hover {
+    background-color: #2980b9;
+  }
+  

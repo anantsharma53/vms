@@ -1,0 +1,38 @@
+/* Footer.css */
+.footer {
+    background-color: #1a1a1a; /* Dark background */
+    color: #fff;              /* White text */
+    text-align: center;
+    /* padding: 20px 0; */
+    font-size: 14px;
+  }
+  
+  .footer a {
+    color: #fff;
+    margin: 0 10px;
+    text-decoration: none;
+  }
+  
+  .footer a:hover {
+    text-decoration: underline;
+  }
+  
+  .footer-top nav {
+    margin-bottom: 20px;
+  }
+  
+  .footer-middle {
+    margin-bottom: 20px;
+  }
+  
+  .footer-bottom {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .footer-bottom img {
+    margin: 0 15px;
+    height: 50px; /* Adjust size as needed */
+  }
+  

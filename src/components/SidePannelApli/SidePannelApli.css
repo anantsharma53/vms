@@ -1,0 +1,64 @@
+/* styles.css */
+
+/* Apply some basic styling to the table */
+table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+  }
+  
+  /* Apply some spacing and margin to the component */
+  /* div {
+    margin: 20px;
+  } */
+  
+  h2 {
+    text-align: center;
+  }
+  
+.applicants-details-container {
+    max-width: 100%;
+    margin: 0px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  /* Add some styles to images */
+  .img-app {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    background-color: #f8f8f8;
+  }
+.tabledesign {
+    border: 1px solid #ddd;
+    padding: 0px;
+    text-align: center;
+    margin: 0px;
+}  
+.insidetable {
+    border: 1px solid #ddd;
+   
+}
+.insidetablerow{
+    border: none;
+    padding: 0px;
+    text-align: center;
+    margin: 0px;
+} 
+
+.resize-table {
+    font-size: 12px; 
+ }

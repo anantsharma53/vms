@@ -1,0 +1,59 @@
+.login-container .login-content .form-container .reginfo {
+    
+    padding-right: 16px;
+    min-width: 300px;
+}
+#signForm {
+    max-width: 600px; /* Adjust the maximum width as needed */
+    margin: 0 auto; /* Center the form */
+  }
+.signForm{
+    max-width: 600px; /* Adjust the maximum width as needed */
+    margin: 0 auto; 
+}
+.is-invalid {
+    border-color: red !important;
+    color: red;
+    
+}
+.invalid-feedback{
+    color: red;
+    margin-top: 0px;
+}
+.password-input {
+    position: relative;
+    width: 100%;
+  }
+  
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding-right: 40px; /* Give enough space for the icon */
+    padding-left: 10px; /* Optional: Add padding to left if needed */
+  }
+  
+  .eye-button {
+    position: absolute;
+    right: 10px; /* Adjust the position of the eye icon from the right */
+    top: 50%; /* Center the icon vertically */
+    transform: translateY(-50%); /* Ensure the icon is perfectly centered */
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 1; /* Ensure the icon appears above the input field */
+  }
+  
+  .is-invalid {
+    border-color: red;
+  }
+  
+  .invalid-feedback {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  

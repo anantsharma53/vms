@@ -1,0 +1,463 @@
+/* Styling for the ComplaintForm component */
+/* .complaint-form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .complaint-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  select,
+  textarea,
+  input[type="file"],
+  button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  
+  textarea {
+    resize: vertical;
+  }
+  
+  select {
+    height: 40px;
+  }
+  
+  button {
+    background-color: #a2aaa6;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  button:hover {
+    background-color: #0c0c0c;
+  }
+  
+  .image-preview {
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  .image-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+   */
+   /* AddComplaint.css */
+
+.complaint-form-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 40px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.complaint-form-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #3498db, #2ecc71, #9b59b6);
+}
+
+.complaint-form-container h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 40px;
+  font-size: 32px;
+  font-weight: 700;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.complaint-form-container h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 4px;
+  background: #3498db;
+  border-radius: 4px;
+}
+
+.complaint-form {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.form-section-title {
+  grid-column: span 3;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f1f5f9;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.form-section-title i {
+  margin-right: 12px;
+  color: #3498db;
+  font-size: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 25px;
+  position: relative;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.form-group label i {
+  margin-right: 8px;
+  color: #3498db;
+  font-size: 18px;
+}
+
+.required::after {
+  content: '*';
+  color: #e74c3c;
+  margin-left: 4px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 16px 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: #fafafa;
+  width: 100%;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.15);
+  background: white;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-group select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 20px center;
+  background-size: 18px;
+  padding-right: 50px;
+}
+
+.form-group.full-width {
+  grid-column: span 3;
+}
+
+.form-group.two-column {
+  grid-column: span 2;
+}
+
+.image-upload-container {
+  grid-column: span 3;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  margin-top: 15px;
+}
+
+.image-upload-field {
+  position: relative;
+  height: 180px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.image-upload-field:hover {
+  border-color: #3498db;
+  background: #f0f7ff;
+  transform: translateY(-3px);
+}
+
+.image-upload-field input[type="file"] {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.image-upload-field .upload-icon {
+  font-size: 36px;
+  color: #94a3b8;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.image-upload-field:hover .upload-icon {
+  color: #3498db;
+}
+
+.image-upload-field .upload-text {
+  color: #64748b;
+  font-size: 15px;
+  text-align: center;
+  padding: 0 15px;
+  font-weight: 500;
+}
+
+.image-preview {
+  position: relative;
+  height: 180px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.image-preview:hover img {
+  transform: scale(1.05);
+}
+
+.remove-image {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(231, 76, 60, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.remove-image:hover {
+  background: #c0392b;
+  transform: scale(1.1);
+}
+
+.add-image-btn-container {
+  grid-column: span 3;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.add-image-btn {
+  background: #f1f5f9;
+  color: #334155;
+  border: 2px dashed #cbd5e1;
+  padding: 14px 30px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-image-btn i {
+  margin-right: 10px;
+  font-size: 20px;
+  color: #3498db;
+}
+
+.add-image-btn:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+  transform: translateY(-2px);
+}
+
+.submit-btn-container {
+  grid-column: span 3;
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.submit-btn {
+  background: linear-gradient(to right, #3498db, #2c77ce);
+  color: white;
+  border: none;
+  padding: 18px 50px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+  letter-spacing: 0.8px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn i {
+  margin-right: 12px;
+  font-size: 22px;
+}
+
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 20px;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(25deg);
+  transition: all 0.8s ease;
+}
+.required {
+  color: red;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+.submit-btn:hover::after {
+  left: 120%;
+}
+
+.submit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.5);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .complaint-form {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .form-section-title,
+  .form-group.full-width,
+  .form-group.two-column,
+  .image-upload-container,
+  .add-image-btn-container,
+  .submit-btn-container {
+    grid-column: span 2;
+  }
+  
+  .image-upload-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .complaint-form-container {
+    padding: 30px;
+    margin: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .complaint-form {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-section-title,
+  .form-group.full-width,
+  .form-group.two-column,
+  .image-upload-container,
+  .add-image-btn-container,
+  .submit-btn-container {
+    grid-column: span 1;
+  }
+  
+  .image-upload-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .complaint-form-container {
+    padding: 25px 20px;
+  }
+  
+  .submit-btn {
+    padding: 16px 40px;
+    font-size: 16px;
+    width: 100%;
+  }
+}

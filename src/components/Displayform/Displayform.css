@@ -1,0 +1,126 @@
+
+.applicant-details-container {
+    max-width: 800px;
+    margin: 0px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .header-section {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .personal-info,
+  .education-section,
+  .experience-section {
+    margin-bottom: 5px;
+  }
+  .applicant-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .applicant-info-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .applicant-info-table td:first-child {
+    font-weight: bold;
+    background-color: #f2f2f2;
+  }
+  
+  /* .education-container,
+  .experience-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  } */
+  
+  /* .education-item,
+  .experience-item {
+    border: 1px solid #ddd;
+    padding: 15px;
+    width: calc(33.33% - 20px);
+    box-sizing: border-box;
+    background-color: #fff;
+    border-radius: 8px;
+    transition: transform 0.3s;
+  } */
+  
+  /* .education-item:hover,
+  .experience-item:hover {
+    transform: scale(1.05);
+  } */
+  
+  .image-section {
+    display: flex;
+    justify-content: space-between;
+    /* flex-direction: column; */
+    margin-top: 20px;
+   
+  }
+  
+  .profile-image {
+    max-width: 150px;
+    height: 200px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  .profile-signe{
+    max-width: 200px;
+    height: 70px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  .applicant-info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .applicant-info-list li {
+    margin-bottom: 3px;
+  }
+  
+  .applicant-info-list li strong {
+    margin-right: 10px;
+  } 
+  .experience-container {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .experience-container th, .experience-container td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .experience-container th {
+    background-color: #f2f2f2;
+  }
+  
+  .experience-item td:first-child {
+    font-weight: bold;
+  }
+  .hide-on-print {
+    display: none,
+}
+
+/* Media query for print styles */
+@media print {
+    /* Hide elements with the hide-on-print class when printing */
+    .hide-on-print {
+        display: none !important;
+    }
+}

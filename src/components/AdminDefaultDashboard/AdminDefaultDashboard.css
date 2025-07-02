@@ -1,0 +1,286 @@
+.dashboard-container {
+  /* display: flex; */
+  flex-wrap: wrap;
+  justify-content: center;
+  background-color: #f4f5f7;
+  font-family: 'Arial', sans-serif;
+  max-width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dashboard-box {
+  flex: 1 1 300px;
+  max-width: 300px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-box h3 {
+  font-size: 18px;
+  color: #34495e;
+  margin-bottom: 10px;
+}
+
+.dashboard-box p {
+  font-size: 24px;
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.dashboard-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+}
+
+.dashboard-box ul li {
+  margin: 5px 0;
+  color: #555555;
+}
+
+.dashboard-box button {
+  display: inline-block;
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #3498db;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.dashboard-box button:hover {
+  background-color: #2980b9;
+  transform: scale(1.05);
+}
+
+.dashboard-box button:focus {
+  outline: none;
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .dashboard-box {
+    max-width: 100%;
+  }
+}
+
+/* SECTION WRAPPER */
+/* SECTION WRAPPER */
+.features {
+  padding: 0.1rem 1rem;
+  background-color: #f9fafb;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.features .container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+/* SECTION HEADER */
+.section-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #1f2937;
+}
+
+.section-description {
+  font-size: 1rem;
+  color: #4b5563;
+}
+
+/* GRID */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  /* 4 columns */
+  gap: 1.5rem;
+}
+
+/* RESPONSIVE GRID */
+@media (max-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* CARD */
+.feature-card {
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  transition: transform 0.3s ease;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* BACKGROUND IMAGE INSIDE EACH CARD */
+.feature-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("https://www.baltana.com/files/wallpapers-4/Abstract-Background-HD-Wallpaper-14095.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.4;
+  /* Control transparency */
+  z-index: -1;
+  filter: blur(1px);
+  /* Optional: soften image */
+  border-radius: 1rem;
+}
+
+/* HOVER EFFECT */
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+/* TITLE + DESCRIPTION */
+.feature-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  color: #111827;
+}
+
+.feature-description {
+  font-size: 0.95rem;
+  margin: 0.5rem 0 1rem;
+  color: #6b7280;
+}
+
+/* HIGHLIGHTED COUNT */
+.feature-highlight {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin-top: 1rem;
+}
+
+/* LIST INSIDE CARD */
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feature-list-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.check-icon {
+  margin-right: 0.5rem;
+  color: #10b981;
+  font-size: 1.1rem;
+}
+
+/* ICON COLORS */
+.feature-icon {
+  font-size: 2rem;
+}
+
+.feature-card.primary {
+  border-left: 4px solid #3b82f6;
+}
+
+.feature-icon.primary {
+  color: #3b82f6;
+}
+
+.feature-card.secondary {
+  border-left: 4px solid #10b981;
+}
+
+.feature-icon.secondary {
+  color: #10b981;
+}
+
+.feature-card.accent {
+  border-left: 4px solid #f59e0b;
+}
+
+.feature-icon.accent {
+  color: #f59e0b;
+}
+
+/* AdminDefaultDashboard.css */
+
+.charts-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 4rem;
+  padding: 0 2rem;
+}
+
+.chart-box {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chart-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.chart-box h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #333;
+  text-align: center;
+}
+
+.recharts-wrapper {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Optional: Tooltip customization */
+.recharts-tooltip-wrapper {
+  z-index: 9999;
+  font-size: 0.9rem;
+}

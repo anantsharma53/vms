@@ -1,0 +1,71 @@
+/* Container for the entire login section */
+.logincontainer1 {
+    display: flex;
+    width: 37%;
+    margin: 50px auto;
+    box-shadow: 0 0 15px rgba(201, 204, 200, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    
+  }
+  
+  /* Styling for each login form section */
+  .loginform {
+    flex: 1;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    
+  }
+  
+  /* Styling for the left login form */
+  .loginform1 {
+    /* background-color: #24d669; */
+    color: #fff;
+    
+  
+  }
+  
+
+  /* Styling for the form elements */
+  .loginform input {
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+  }
+  
+  .loginform button {
+    width: 350px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #045007;
+    /* background-image: linear-gradient(135deg, #007bff, #00c6ff); */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    text-align: center;
+    
+  }
+  
+  .loginform button:hover {
+    /* background-image: linear-gradient(135deg, #0069d9, #00a3cc); */
+    transform: scale(1.05);
+  }
+  
+  .loginform a {
+    margin-top: 10px;
+    text-align: center;
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.9em;
+  }
+  
+  .loginform a:hover {
+    text-decoration: underline;
+  }
+  
