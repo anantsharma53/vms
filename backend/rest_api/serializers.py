@@ -11,23 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
         return User.objects.create(**validated_data)
-# class UserSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = "__all__"
 
-#     def create(self, validated_data):
-#         user = User.objects.create_user(
-#             username=validated_data['username'],
-#             password=validated_data['password'],
-#             name=validated_data.get('name', ''),
-#             panchyat=validated_data.get('panchyat', ''),
-#             village=validated_data.get('village', ''),
-#             email=validated_data.get('email', ''),
-#             mobile_number=validated_data.get('mobile_number', ''),
-#             department=validated_data.get('department', None),
-#         )
-#         return user
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -50,32 +34,7 @@ class ComplaintImageSerializer(serializers.ModelSerializer):
         fields = ['id', 'image']
 
 
-# class ComplaintSerializer(serializers.ModelSerializer):
-#     images = ComplaintImageSerializer(many=True, read_only=True)  # For response
-#     user_name = serializers.CharField(source="user.name", read_only=True)  # Fetch user's name
-#     class Meta:
-#         model = Complaint
-#         fields = [
-#             'id',
-#             'user', 'user_name',
-#             'name', 'mobile_number', 'email',
-#             'village', 'panchyat', 'pin_code',
-#             'post_office', 'police_station', 'district',
-#             'correspondentAddress',
-#             'category', 'complaint_text', 'resolution',
-#             'feedback', 'created_at',
-#             'images',
-#             'department',
-#         ]
-#         extra_kwargs = {
-#             'user': {'required': False},
-#             'name': {'required': False},
-#             'mobile_number': {'required': False},
-#             'email': {'required': False},
-#             'resolution': {'required': False},
-#             'feedback': {'required': False},
-#             'department': {'required': False},
-#         }
+
   
 class ComplaintSerializer(serializers.ModelSerializer):
     images = ComplaintImageSerializer(many=True, read_only=True)
@@ -109,18 +68,7 @@ class FeedbackSerializer(serializers.Serializer):
     feedback = serializers.CharField(required=True, max_length=10000)
 
 
-# class ApplicantInformationSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = ApplicantInformation
-#         fields = '__all__'  # Include all fields from the model
 
-#     def create(self, validated_data):
-#         # Generate application number before saving the instance
-#         last_application = ApplicantInformation.objects.order_by('id').last()
-#         application_number = f"JHARSEWA-{last_application.id + 1 if last_application else 1:06}"
-#         validated_data['application_number'] = application_number
-        
-#         return super().create(validated_data)
 
 class ApplicantInformationSerializer(serializers.ModelSerializer):
     # Convert ImageField to URL format
@@ -175,10 +123,6 @@ class ApplicantFileUploadSerializer(serializers.ModelSerializer):
 
 
 
-# class ApplicantInformationSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = ApplicantInformation
-#         fields = '__all__'
 
 class JobApplicationSerializer(serializers.ModelSerializer):
     class Meta:

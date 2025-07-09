@@ -120,25 +120,6 @@ class ApplicantInformation(models.Model):
     def __str__(self):
         return f"{self.applicantName}'s Application Information"
 
-
-# class Complaint(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="complaints")
-#     name= models.CharField(max_length=255,blank=True, null=True)
-#     mobile_number = models.CharField(max_length=15, blank=True, null=True)
-#     email = models.EmailField(max_length=100, blank=True, null=True)
-#     village = models.CharField(max_length=255)
-#     panchyat = models.CharField(max_length=255)
-#     pin_code = models.CharField(max_length=6)
-#     post_office = models.CharField(max_length=255)
-#     police_station = models.CharField(max_length=255)
-#     district = models.CharField(max_length=255)
-#     correspondentAddress = models.TextField()
-#     category = models.CharField(max_length=255)
-#     complaint_text = models.TextField()
-#     resolution = models.TextField(null=True, blank=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     feedback = models.TextField(null=True, blank=True)
-#     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
 class Complaint(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -173,9 +154,6 @@ class Complaint(models.Model):
     rejection_remarks = models.TextField(blank=True, null=True)
 
 
-# class ComplaintImage(models.Model):
-#     complaint = models.ForeignKey(Complaint, on_delete=models.CASCADE, related_name='images')
-#     image = models.ImageField(upload_to='complaint_images/')
 
 class ComplaintImage(models.Model):
     complaint = models.ForeignKey(Complaint, related_name='images', on_delete=models.CASCADE)

@@ -29,7 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+RESEND_API_KEY = 're_nypahNPR_CnQDj6kw1HdvjJyXe76MfAyB'
 # Application definition
 
 INSTALLED_APPS = [

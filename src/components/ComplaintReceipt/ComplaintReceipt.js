@@ -1,7 +1,30 @@
 import React from 'react';
 import './ComplaintReceipt.css';
+import { useEffect, useState } from "react";
 
 const ComplaintReceipt = ({ complaintData, onClose }) => {
+  const [departments, setDepartments] = useState([]);
+  const fetchDepartments = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://127.0.0.1:8000/api/departments/", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      setDepartments(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getDepartmentNameFromList = (id) => {
+    const dept = departments.find((d) => d.id === id);
+    return dept ? dept.name : "—";
+  };
+   useEffect(() => {
+      fetchDepartments();
+    }, );
+
   const handlePrint = () => {
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
@@ -36,7 +59,8 @@ const ComplaintReceipt = ({ complaintData, onClose }) => {
             </div>
             
             <div class="details-grid">
-              <div class="detail-item"><span class="detail-label">ID:</span> ${complaintData.id}</div>
+              <div class="detail-item"><span class="detail-label">ID:</span> ${complaintData.id}   </div>
+              
               <div class="detail-item"><span class="detail-label">Phone:</span> ${complaintData.mobile_number || 'N/A'}</div>
               <div class="detail-item"><span class="detail-label">Name:</span> ${complaintData.name || 'N/A'}</div>
               <div class="detail-item"><span class="detail-label">Address:</span> ${complaintData.correspondentAddress || 'N/A'}</div>
@@ -48,9 +72,8 @@ const ComplaintReceipt = ({ complaintData, onClose }) => {
               <div class="detail-item"><span class="detail-label">Block:</span> ${complaintData.panchyat || 'N/A'}</div>
               <div class="detail-item"><span class="detail-label">District:</span> ${complaintData.district || 'N/A'}</div>
               <div class="detail-item"><span class="detail-label">Email:</span> ${complaintData.email || 'N/A'}</div>
-              <div class="detail-item"><span class="detail-label">Complaint Type:</span> ${complaintData.category_name || 'N/A'}</div>
-              <div class="detail-item"><span class="detail-label">Department:</span> ${complaintData.department_name || 'N/A'}</div>
-              <div class="detail-item"><span class="detail-label">Priority:</span> ${complaintData.priority || 'medium'}</div>
+              
+              <div class="detail-item"><span class="detail-label">Department:</span>${getDepartmentNameFromList(parseInt(complaintData.category))}</div>
               <div class="detail-item"><span class="detail-label">Status:</span> ${complaintData.status || 'pending'}</div>
               <div class="detail-item"><span class="detail-label">Description:</span> ${complaintData.complaint_text || 'N/A'}</div>
               <div class="detail-item"><span class="detail-label">Created At:</span> ${new Date(complaintData.created_at).toLocaleString()}</div>
@@ -61,7 +84,7 @@ const ComplaintReceipt = ({ complaintData, onClose }) => {
               <ul>
                 <li>User's are advised to go to the respected department with this Visitor's Slip to get an Update</li>
                 <li>User's Can Also Visit our website and enter Complaint ID to get an Update</li>
-                <li>User's Can Also Scan the QR code of this Visitor's Slip to get an Update</li>
+                
               </ul>
             </div>
             
@@ -70,33 +93,7 @@ const ComplaintReceipt = ({ complaintData, onClose }) => {
             </div>
           </div>
           
-          <div class="receipt-container" style="margin-top: 50px;">
-            <div class="header">
-              <div class="office-name">Office of the District Magistrate-Cum-<br>Deputy Commissioner, Jamtara, Jharkhand</div>
-              <div class="receipt-title">Welcome To Complaint Management System</div>
-              <div class="copy-label">Complaint's Slip (User's Copy)</div>
-            </div>
-            
-            <!-- Same content as Office Copy -->
-            <div class="details-grid">
-              <div class="detail-item"><span class="detail-label">ID:</span> ${complaintData.id}</div>
-              <div class="detail-item"><span class="detail-label">Phone:</span> ${complaintData.mobile_number || 'N/A'}</div>
-              <!-- Include all other fields as in Office Copy -->
-            </div>
-            
-            <div class="instructions">
-              <h3>Instructions:</h3>
-              <ul>
-                <li>User's are advised to go to the respected department with this Visitor's Slip to get an Update</li>
-                <li>User's Can Also Visit our website and enter Complaint ID to get an Update</li>
-                <li>User's Can Also Scan the QR code of this Visitor's Slip to get an Update</li>
-              </ul>
-            </div>
-            
-            <div class="footer">
-              <p>This is a computer generated receipt. No signature required.</p>
-            </div>
-          </div>
+          
           
           <script>
             setTimeout(() => {

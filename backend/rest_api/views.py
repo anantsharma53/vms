@@ -20,6 +20,24 @@ from django.contrib.auth import update_session_auth_hash
 from django.db.models import Q
 from datetime import datetime
 from django.utils import timezone
+import requests
+from django.conf import settings
+
+def send_email_with_resend(subject, html_content, to_email):
+    url = "https://api.resend.com/emails"
+    headers = {
+        "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "from": "Jamtara Complaints <noreply@jamtara.gov.in>",
+        "to": [to_email],
+        "subject": subject,
+        "html": html_content
+    }
+    response = requests.post(url, json=data, headers=headers)
+    return response.json()
+
 
 class SignUpView(APIView):
     def post(self, request):
@@ -416,104 +434,6 @@ class AllUserInformationAPIView(APIView):
         except User.DoesNotExist:
             return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-
-
-
-# class UserInformationAPIView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         user = request.user
-#         try:
-#             # Fetching application details if the user has applied
-#             application = ApplicantInformation.objects.filter(user=user).first()
-#             application_data = None
-#             application = ApplicantInformation.objects.filter(user=user).first()
-#             has_applied = application is not None
-#             application_number = application.application_number if application else None
-            
-#             if application:
-#                 application_data = {
-#                     "application_number": application.application_number,
-#                     "post": application.post,
-#                     "applicant_name": application.applicantName,
-#                     "father_name": application.fatherName,
-#                     "gender": application.gender,
-#                     "dob": application.dob,
-#                     "village": application.village,
-#                     "panchyat": application.panchyat,
-#                     "post_office": application.post_office,
-#                     "police_station": application.police_station,
-#                     "circle": application.circle,
-#                     "district": application.district,
-#                     "pin_code": application.pin_code,
-#                     "correspondent_address": application.correspondentAddress,
-#                     "mobile_number": application.mobileNumber,
-#                     "aadhaar_number": application.aadhaar_number,
-#                     "pan": application.pan,
-#                     "disability_percentage": application.disability_percentage,
-#                     "disability_type": application.disability_type,
-#                     "education": application.education,
-#                     "board_university": application.boardUniversity,
-#                     "passing_year": application.passingYear,
-#                     "total_marks": application.total_marks,
-#                     "obtained_marks": application.obtained_marks,
-#                     "percentage": application.percentage,
-#                     "residential_certificate_number": application.residential_certificate_number,
-#                     "residential_certificate_date": application.residential_certificate_date,
-#                     "category": application.category,
-#                     "caste_certificate_number": application.caste_certificate_number,
-#                     "caste_certificate_date": application.caste_certificate_date,
-#                     "application_status": application.application_status,
-#                     "remarks": application.remarks,
-#                     "email": application.email,
-#                     "application_date": application.application_date,
-#                     "power_backup": application.power_backup,
-#                     "center_location": application.center_location,
-#                     "net_connection": application.net_connection,
-#                     "center_equipments": application.center_equipments,
-#                     "active_services": application.active_services,
-#                     "is_ex_serviceman": application.is_ex_serviceman,
-#                     "has_criminal_case": application.has_criminal_case,
-#                     "criminal_case_details": application.criminal_case_details,
-#                     "identification_mark_1": application.identification_mark_1,
-#                     "identification_mark_2": application.identification_mark_2,
-#                     "nationality": application.nationality,
-#                     "image":application.image,
-#                     "signature":application.signature,
-#                     "aadhar_card":application.aadhar_card,
-#                     "pan_card":application.pan_card,
-#                     "center_outside":application.center_outside,
-#                     "center_inside":application.center_inside,
-#                     "computer_certificate":application.computer_certificate,
-#                     "authorised_certificate":application.authorised_certificate,
-#                     "application_form":application.application_form
-
-#                 }
-
-#             # Fetching user details
-#             user_data = {
-#                 "id": user.id,
-#                 "name": user.name,
-#                 "email": user.email,
-#                 "mobile_number": user.mobile_number,
-#                 "panchyat": user.panchyat,
-#                 "village": user.village,
-#                 "username": user.username,
-#                 "is_candidate": user.is_candidate,
-#                 "is_staff": user.is_staff,
-#                 "is_superuser": user.is_superuser,
-#                 "has_applied": application is not None,  # True if application exists
-#                 "application_details": application_data,  # Include application details if exists
-#                 "application_number": application_number,
-#             }
-
-#             return Response(user_data, status=status.HTTP_200_OK)
-#         except Exception as e:
-#             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
 class UpdatePasswordAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -566,30 +486,69 @@ class UpdatePasswordAPIView(APIView):
 
 
 
+# class ComplaintView(APIView):
+#     permission_classes = [IsAuthenticated]
+#     parser_classes = [MultiPartParser, FormParser]
+
+#     def post(self, request, *args, **kwargs):
+#         # Extract images
+#         images_data = request.FILES.getlist('images')
+        
+#         # Add the authenticated user to the request data
+#         data = request.data.copy()
+#         data['user'] = request.user.id
+
+#         # Serialize and save the complaint
+#         serializer = ComplaintSerializer(data=data)
+#         if serializer.is_valid():
+#             complaint = serializer.save()  # Save the complaint instance
+
+#             # Save each image to the ComplaintImage model
+#             for image_file in images_data:
+#                 ComplaintImage.objects.create(complaint=complaint, image=image_file)
+
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class ComplaintView(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request, *args, **kwargs):
-        # Extract images
         images_data = request.FILES.getlist('images')
-        
-        # Add the authenticated user to the request data
         data = request.data.copy()
         data['user'] = request.user.id
 
-        # Serialize and save the complaint
         serializer = ComplaintSerializer(data=data)
         if serializer.is_valid():
-            complaint = serializer.save()  # Save the complaint instance
+            complaint = serializer.save()
 
-            # Save each image to the ComplaintImage model
             for image_file in images_data:
                 ComplaintImage.objects.create(complaint=complaint, image=image_file)
 
+            # ✅ Send email via Resend
+            self.send_email(complaint)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def send_email(self, complaint):
+        url = "https://api.resend.com/emails"
+        headers = {
+            "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        data = {
+            "from": "Jamtara Complaints <onboarding@resend.dev>",  # Must be verified in Resend
+            "to": [complaint.email],  # Replace with actual recipient
+            "subject": "New Complaint Registered",
+            "html": f"<p>Complaint ID: {complaint.id}<br>Category: {complaint.category}<br>Details: {complaint.complaint_text}</p>"
+        }
+        try:
+            requests.post(url, json=data, headers=headers)
+        except requests.RequestException as e:
+            print("Email sending failed:", e)
 
 class FeedbackView(APIView):
     permission_classes = [IsAuthenticated]
@@ -616,64 +575,6 @@ class StandardResultsPagination(PageNumberPagination):
     page_size = 10  # Default items per page
     page_size_query_param = 'page_size'  # Allow client to set page size
     max_page_size = 100  # Max limit for page size
-
-# Assuming Complaint and ComplaintSerializer are already defined
-# class ComplaintListView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request, *args, **kwargs):
-#         user = request.user  # Logged-in user
-#         query_params = request.query_params
-
-#         # Base query for complaints
-#         if user.is_staff:
-#             # Staff users only see complaints with null resolutions
-#             complaints = Complaint.objects.select_related('user').prefetch_related('images').filter(resolution__isnull=True)
-#         elif user.is_superuser or user.is_recptionstaff:
-#             # Superusers see all complaints
-#             complaints = Complaint.objects.select_related('user').prefetch_related('images').all()
-        
-#         else:
-#             # Regular users see their own complaints
-#             complaints = Complaint.objects.filter(user=user).prefetch_related('images')
-
-#         # Filtering by optional search parameters
-#         complaint_id = query_params.get('complaint_id', None)
-#         category = query_params.get('category', None)
-#         start_date = query_params.get('start_date', None)
-#         end_date = query_params.get('end_date', None)
-
-#         if complaint_id:
-#             complaints = complaints.filter(id=complaint_id)
-
-#         if category:
-#             complaints = complaints.filter(category__icontains=category)
-
-#         if start_date:
-#             try:
-#                 start_date = datetime.strptime(start_date, '%Y-%m-%d')
-#                 start_date = timezone.make_aware(start_date, timezone.utc)  # Make it timezone-aware if needed
-#                 complaints = complaints.filter(created_at__gte=start_date)
-#             except ValueError:
-#                 return Response({"error": "Invalid start_date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
-
-#         if end_date:
-#             try:
-#                 end_date = datetime.strptime(end_date, '%Y-%m-%d')
-#                 end_date = timezone.make_aware(end_date.replace(hour=23, minute=59, second=59, microsecond=999999), timezone.utc)  # End of the day
-#                 complaints = complaints.filter(created_at__lte=end_date)
-#             except ValueError:
-#                 return Response({"error": "Invalid end_date format. Use YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
-
-#         # Default sorting by date (descending)
-#         complaints = complaints.order_by('-created_at')
-
-#         # Pagination
-#         paginator = StandardResultsPagination()
-#         result_page = paginator.paginate_queryset(complaints, request)
-
-#         serializer = ComplaintSerializer(result_page, many=True)
-#         return paginator.get_paginated_response(serializer.data)
 
 class ComplaintListView(APIView):
     permission_classes = [IsAuthenticated]
