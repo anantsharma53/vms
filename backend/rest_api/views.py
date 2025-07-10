@@ -534,17 +534,54 @@ class ComplaintView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def send_email(self, complaint):
+        try:
+            department = Department.objects.get(id=complaint.category)
+            department_name = department.name
+        except Department.DoesNotExist:
+            department_name = "Unknown Department"
         url = "https://api.resend.com/emails"
         headers = {
             "Authorization": f"Bearer {settings.RESEND_API_KEY}",
             "Content-Type": "application/json"
         }
         data = {
-            "from": "Jamtara Complaints <onboarding@resend.dev>",  # Must be verified in Resend
-            "to": [complaint.email],  # Replace with actual recipient
-            "subject": "New Complaint Registered",
-            "html": f"<p>Complaint ID: {complaint.id}<br>Category: {complaint.category}<br>Details: {complaint.complaint_text}</p>"
-        }
+                "from": "Jamtara Complaints <noreply@jamtaradistrict.in>",
+                "to": [complaint.email],
+                "subject": "✅ Your Complaint Has Been Registered",
+                "html": f"""
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                    <h2 style="color: #0066cc;">📩 Complaint Acknowledgement</h2>
+                    <p>Dear <strong>{complaint.name}</strong>,</p>
+                    
+                    <p>Thank you for submitting your complaint. Below are the details:</p>
+
+                    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                        <tr>
+                            <td style="padding: 8px; font-weight: bold;">🆔 Complaint ID:</td>
+                            <td style="padding: 8px;">JH/JMT/{department_name}/{complaint.created_at}/{complaint.id}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; font-weight: bold;">🏢 Department:</td>
+                            <td style="padding: 8px;">{department_name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; font-weight: bold;">📝 Details:</td>
+                            <td style="padding: 8px;">{complaint.complaint_text}</td>
+                        </tr>
+                    </table>
+
+                    <p style="color: #444;">📅 We will take appropriate action as soon as possible and notify you of any updates.</p>
+
+                    <p style="margin-top: 30px;">Regards,<br><strong>District Office, Jamtara</strong></p>
+
+                    <hr style="margin: 30px 0;">
+                    <p style="font-size: 12px; color: #888;">
+                        This is an automated message from Jamtara Complaint Portal. Please do not reply to this email.
+                    </p>
+                </div>
+                """
+            }
+
         try:
             requests.post(url, json=data, headers=headers)
         except requests.RequestException as e:
