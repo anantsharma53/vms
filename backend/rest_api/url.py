@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from .views import ( SignUpView, SignInView, JobApplicationAPIView, ApplicantFileUploadAPIView,ApplicantByPostAPIView,ComplaintDetailView,ComplaintListView,JharsewaApplicantAPIView,ApplicantByPostAPIView,
                     AllUserInformationAPIView,UserInformationAPIView,ComplaintView,FeedbackView,UpdatePasswordAPIView,AdminComplaintView,SearchAdmitCardView,ComplaintCountAPIView,ComplaintResolutionView,ApplicantInformationView
                     ,DepartmentListCreateAPIView,DepartmentDetailAPIView,ComplaintAcceptView,ComplaintRejectView,ComplaintForwardView,ComplaintDisposeView,ComplaintReassignByAdminView,
-                    SolvedComplaintsView)
+                    SolvedComplaintsView,ComplaintResolutionAddView)
 
 
 urlpatterns = [
@@ -37,6 +37,7 @@ urlpatterns = [
     path('complaint/<int:pk>/accept/', ComplaintAcceptView.as_view(), name='complaint-accept'),
     path('complaint/<int:pk>/reject/', ComplaintRejectView.as_view(), name='complaint-reject'),
     path('complaint/<int:pk>/forward/', ComplaintForwardView.as_view(), name='complaint-forward'),
+    path('complaint/<int:pk>/resolve/', ComplaintResolutionAddView.as_view(), name='complaint-resolve'),
     path('complaint/<int:pk>/dispose/', ComplaintDisposeView.as_view(), name='complaint-dispose'),
     path('complaint/<int:pk>/reassign/', ComplaintReassignByAdminView.as_view(), name='complaint-reassign'),
     # Add other URL patterns as needed

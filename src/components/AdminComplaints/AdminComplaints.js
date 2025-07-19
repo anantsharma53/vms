@@ -106,7 +106,7 @@ const AdminComplaints = () => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ resolution }),
+      body: JSON.stringify({ remarks: resolution }),
     });
     setAcceptResolutionModalId(null);
     fetchComplaints(currentPage);
@@ -259,11 +259,11 @@ const AdminComplaints = () => {
       {acceptResolutionModalId && (
         <div className="resolution-overlay">
           <div className="resolution-container">
-            <h3>Enter Resolution for Complaint ID: {acceptResolutionModalId}</h3>
+            <h3>Enter Accept Remarks  for Complaint ID: {acceptResolutionModalId}</h3>
             <textarea
               value={resolution}
               onChange={(e) => setResolution(e.target.value)}
-              placeholder="Enter resolution here"
+              placeholder="Enter Remarks here"
             ></textarea>
             <div className="modal-buttons">
               <button onClick={handleAccept}>Submit</button>

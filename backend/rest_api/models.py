@@ -152,6 +152,7 @@ class Complaint(models.Model):
     forwarded_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='forwarded_by_user')
     forward_remarks = models.TextField(blank=True, null=True)
     rejection_remarks = models.TextField(blank=True, null=True)
+    accept_remarks = models.TextField(blank=True, null=True)
 
 
 

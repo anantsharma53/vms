@@ -630,7 +630,7 @@ class ComplaintListView(APIView):
             if not user.department_id:
                 return Response({"error": "Staff user does not have a department assigned."}, status=400)
             complaints = Complaint.objects.select_related('user').prefetch_related('images').filter(
-                resolution__isnull=True,
+                accept_remarks__isnull=True,
                 category=user.department_id  # 🔐 Only complaints related to their department
             )
 
@@ -854,17 +854,17 @@ class ComplaintAcceptView(APIView):
             return Response({"error": "Unauthorized"}, status=403)
 
         complaint.status = 'accepted'
-        complaint.resolution = request.data.get('resolution')
+        complaint.accept_remarks = request.data.get('remarks')
         complaint.save()
 
         ComplaintAction.objects.create(
             complaint=complaint,
             performed_by=request.user,
             action="accepted",
-            remarks=request.data.get('resolution')
+            remarks=request.data.get('remarks')
         )
 
-        return Response({"message": "Complaint accepted and resolution added."})
+        return Response({"message": "Complaint accepted and accept remarks added."})
 
 
 class ComplaintRejectView(APIView):
@@ -909,6 +909,26 @@ class ComplaintForwardView(APIView):
 
         return Response({"message": "Complaint forwarded to subsidiary office."})
 
+class ComplaintResolutionAddView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, pk):
+        complaint = get_object_or_404(Complaint, pk=pk)
+        if request.user.department_id != complaint.category:
+            return Response({"error": "Unauthorized"}, status=403)
+
+        complaint.status = 'accepted'
+        complaint.resolution = request.data.get('remarks')
+        complaint.save()
+
+        ComplaintAction.objects.create(
+            complaint=complaint,
+            performed_by=request.user,
+            action="accepted",
+            remarks=request.data.get('remarks')
+        )
+
+        return Response({"message": "Complaint Resolution added."})
 
 class ComplaintDisposeView(APIView):
     permission_classes = [IsAuthenticated]
