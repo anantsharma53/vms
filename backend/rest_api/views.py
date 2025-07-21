@@ -22,21 +22,64 @@ from datetime import datetime
 from django.utils import timezone
 import requests
 from django.conf import settings
+from django.utils.html import escape
 
-def send_email_with_resend(subject, html_content, to_email):
-    url = "https://api.resend.com/emails"
-    headers = {
-        "Authorization": f"Bearer {settings.RESEND_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    data = {
-        "from": "Jamtara Complaints <noreply@jamtara.gov.in>",
-        "to": [to_email],
-        "subject": subject,
-        "html": html_content
-    }
-    response = requests.post(url, json=data, headers=headers)
-    return response.json()
+def send_email_with_resend(complaint, subject, message_html):
+    try:
+        department = Department.objects.get(id=complaint.category)
+        department_name = department.name
+    except:
+        department_name = "Unknown Department"
+
+    complaint_id = f"JH/JMT/{department_name}/{complaint.created_at.strftime('%d-%m-%Y')}/{complaint.id}"
+
+    html_content = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+            <h2 style="color: #0066cc;">📩 Complaint Update Notification</h2>
+            <p>Dear <strong>{escape(complaint.name)}</strong>,</p>
+            {message_html}
+            <p style="color: #444; font-size: 16px;">
+                You can check your complaint status — 
+                <a href="https://jamtaradistrict.in/complaint-status?id={complaint.id}" style="color: #007BFF; text-decoration: underline; font-weight: bold;">
+                    Click here
+                </a>.
+            </p>
+            <p style="margin-top: 30px;">Regards,<br><strong>District Office, Jamtara</strong></p>
+            <hr style="margin: 30px 0;">
+            <p style="font-size: 12px; color: #888;">
+                This is an automated message from the Jamtara Complaint Portal. Please do not reply to this email.
+            </p>
+        </div>
+    """
+
+    requests.post(
+        "https://api.resend.com/emails",
+        headers={
+            "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+            "Content-Type": "application/json"
+        },
+        json={
+            "from": "Jamtara Complaints <noreply@jamtaradistrict.in>",
+            "to": [complaint.email],
+            "subject": subject,
+            "html": html_content,
+        }
+    )
+
+# def send_email_with_resend(complaint, subject, html_content):
+#     url = "https://api.resend.com/emails"
+#     headers = {
+#         "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+#         "Content-Type": "application/json"
+#     }
+#     data = {
+#         "from": "Jamtara Complaints <noreply@jamtara.gov.in>",
+#         "to": [complaint.email],
+#         "subject": subject,
+#         "html": html_content
+#     }
+#     response = requests.post(url, json=data, headers=headers)
+#     return response.json()
 
 
 class SignUpView(APIView):
@@ -485,31 +528,6 @@ class UpdatePasswordAPIView(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-# class ComplaintView(APIView):
-#     permission_classes = [IsAuthenticated]
-#     parser_classes = [MultiPartParser, FormParser]
-
-#     def post(self, request, *args, **kwargs):
-#         # Extract images
-#         images_data = request.FILES.getlist('images')
-        
-#         # Add the authenticated user to the request data
-#         data = request.data.copy()
-#         data['user'] = request.user.id
-
-#         # Serialize and save the complaint
-#         serializer = ComplaintSerializer(data=data)
-#         if serializer.is_valid():
-#             complaint = serializer.save()  # Save the complaint instance
-
-#             # Save each image to the ComplaintImage model
-#             for image_file in images_data:
-#                 ComplaintImage.objects.create(complaint=complaint, image=image_file)
-
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class ComplaintView(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
@@ -571,7 +589,12 @@ class ComplaintView(APIView):
                     </table>
 
                     <p style="color: #444;">📅 We will take appropriate action as soon as possible and notify you of any updates.</p>
-
+                    <p style="color: #444; font-size: 16px;">
+                        Check your complaint's current status — 
+                            <a href="#" style="color: #007BFF; text-decoration: underline; font-weight: bold;">
+                            Click here
+                            </a>.
+                    </p>
                     <p style="margin-top: 30px;">Regards,<br><strong>District Office, Jamtara</strong></p>
 
                     <hr style="margin: 30px 0;">
@@ -863,6 +886,11 @@ class ComplaintAcceptView(APIView):
             action="accepted",
             remarks=request.data.get('remarks')
         )
+        send_email_with_resend(
+            complaint,
+            "✅ Complaint Accepted",
+            f"<p>Your complaint has been <strong>accepted</strong> by the department.</p><p><em>Remarks:</em> {escape(request.data.get('remarks'))}</p>"
+        )
 
         return Response({"message": "Complaint accepted and accept remarks added."})
 
@@ -881,6 +909,11 @@ class ComplaintRejectView(APIView):
             performed_by=request.user,
             action="rejected",
             remarks=request.data.get('remarks')
+        )
+        send_email_with_resend(
+            complaint,
+            "⚠️ Complaint Sent for Admin Review",
+            f"<p>Your complaint has been <strong>sent to the district administrator</strong> for reassignment.</p><p><em>Remarks:</em> {escape(request.data.get('remarks'))}</p>"
         )
 
         return Response({"message": "Complaint sent to admin for reassignment."})
@@ -906,6 +939,11 @@ class ComplaintForwardView(APIView):
             to_department=to_dept,
             remarks=request.data.get("remarks")
         )
+        send_email_with_resend(
+            complaint,
+            "➡️ Complaint Forwarded",
+            f"<p>Your complaint has been <strong>forwarded</strong> to the concerned department: <strong>{to_dept.name}</strong>.</p><p><em>Remarks:</em> {escape(request.data.get('remarks'))}</p>"
+        )
 
         return Response({"message": "Complaint forwarded to subsidiary office."})
 
@@ -927,6 +965,11 @@ class ComplaintResolutionAddView(APIView):
             action="accepted",
             remarks=request.data.get('remarks')
         )
+        send_email_with_resend(
+            complaint,
+            "✅ Complaint Resolved",
+            f"<p>Your complaint has been <strong>resolved</strong>.</p><p><em>Resolution:</em> {escape(request.data.get('remarks'))}</p>"
+        )
 
         return Response({"message": "Complaint Resolution added."})
 
@@ -946,6 +989,11 @@ class ComplaintDisposeView(APIView):
             performed_by=request.user,
             action="disposed",
             remarks="Marked as disposed"
+        )
+        send_email_with_resend(
+            complaint,
+            "🗃️ Complaint Disposed",
+            "<p>Your complaint has been <strong>disposed</strong> by the district administrator.</p>"
         )
 
         return Response({"message": "Complaint marked as disposed by admin."})
@@ -973,5 +1021,11 @@ class ComplaintReassignByAdminView(APIView):
             remarks=request.data.get("remarks"),
             to_department=new_dept
         )
+        send_email_with_resend(
+            complaint,
+            "🔄 Complaint Reassigned",
+            f"<p>Your complaint has been <strong>reassigned</strong> to a new department: <strong>{new_dept.name}</strong>.</p><p><em>Remarks:</em> {escape(request.data.get('remarks'))}</p>"
+        )
+
 
         return Response({"message": "Complaint reassigned to another department."})

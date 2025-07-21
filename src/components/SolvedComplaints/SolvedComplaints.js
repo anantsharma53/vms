@@ -18,6 +18,8 @@ const SolvedComplaints = () => {
     status: ""
   });
   const [filterMenuVisible, setFilterMenuVisible] = useState(false);
+  const [resolution, setResolution] = useState('');
+  const [acceptResolutionModalId, setAcceptResolutionModalId] = useState(null);
 
   const toggleFilterMenu = () => setFilterMenuVisible(!filterMenuVisible);
 
@@ -104,6 +106,39 @@ const SolvedComplaints = () => {
   const handleImageClick = (url) => setSelectedImage(url);
   const closeZoom = () => setSelectedImage(null);
 
+  const handleAccept = async () => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/complaint/${acceptResolutionModalId}/resolve/`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ remarks: resolution }),
+      });
+
+      if (response.ok) {
+        alert("✅ Complaint accepted successfully!");
+        setAcceptResolutionModalId(null);
+        fetchComplaints(currentPage);
+      } else {
+        const errorData = await response.json();
+        alert(`❌ Error: ${errorData.error || "Something went wrong."}`);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("❌ Network error or server is unreachable.");
+    }
+  };
+
+
+  const handleAcceptOpenModal = (id) => {
+    setAcceptResolutionModalId(id);
+    setResolution("");
+  };
+
   useEffect(() => {
     fetchComplaints();
     fetchDepartments();
@@ -145,6 +180,7 @@ const SolvedComplaints = () => {
             <th>Complaint</th>
             <th>Media</th>
             <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -176,6 +212,36 @@ const SolvedComplaints = () => {
               <td style={{ fontWeight: "bold", color: complaint.status === "disposed" ? "green" : "blue" }}>
                 {complaint.status.toUpperCase()}
               </td>
+              <td className="radio-actions">
+                {complaint.status === "admin_review" ? (
+                  <div
+                    className="status-label"
+                    style={{ marginBottom: "8px", fontWeight: "bold", color: "#555" }}
+                  >
+                    Status:{" "}
+                    <span style={{ color: "red" }}>
+                      {complaint.status.replace("_", " ").toUpperCase()}
+                    </span>
+                  </div>
+                ) : (
+                  <button
+                    className="accept-button"
+                    onClick={() => handleAcceptOpenModal(complaint.id)}
+                    style={{
+                      padding: "6px 12px",
+                      backgroundColor: "#28a745",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontWeight: "bold"
+                    }}
+                  >
+                    Add Resolution
+                  </button>
+                )}
+              </td>
+
             </tr>
           ))}
         </tbody>
@@ -191,6 +257,23 @@ const SolvedComplaints = () => {
         <div className="zoom-overlay" onClick={closeZoom}>
           <div className="zoom-container">
             <img src={selectedImage} alt="Zoomed" className="zoom-image" />
+          </div>
+        </div>
+      )}
+      {/* Accept Modal */}
+      {acceptResolutionModalId && (
+        <div className="resolution-overlay">
+          <div className="resolution-container">
+            <h3>Enter Resolution Remarks  for Complaint ID: {acceptResolutionModalId}</h3>
+            <textarea
+              value={resolution}
+              onChange={(e) => setResolution(e.target.value)}
+              placeholder="Enter Remarks here"
+            ></textarea>
+            <div className="modal-buttons">
+              <button onClick={handleAccept}>Submit</button>
+              <button onClick={() => setAcceptResolutionModalId(null)}>Cancel</button>
+            </div>
           </div>
         </div>
       )}

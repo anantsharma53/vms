@@ -68,13 +68,13 @@ const fetchDepartments = async () => {
           {user_details.is_staff === true && (
             <>
               {/* <li onClick={() => onMenuClick('menu-item-11')}>JharSewa Applications</li> */}
-              <li onClick={() => onMenuClick('menu-item-4')}>View Complaint </li>
+              <li onClick={() => onMenuClick('menu-item-4')}>View Complaints </li>
               
             </>
           )}
             
             <li onClick={() => onMenuClick('menu-item-5')}>Complaint Summary</li>
-            <li onClick={() => onMenuClick('menu-item-6')}>Solved Complaint</li>
+            <li onClick={() => onMenuClick('menu-item-6')}>Accepts Complaints</li>
             <li onClick={() => onMenuClick('menu-item-7')}>Contact Us</li>
             {/* <li onClick={() => onMenuClick('menu-item-1')}>Apply Application Part I</li>
             <li onClick={() => onMenuClick('menu-item-2')}>Apply Application Part II</li>

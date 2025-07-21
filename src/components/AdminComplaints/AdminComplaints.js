@@ -92,12 +92,7 @@ const AdminComplaints = () => {
     setForwardRemarks("");
   };
 
-  // method: "PATCH",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //           body: JSON.stringify({ resolution }),
+
   const handleAccept = async () => {
     const token = localStorage.getItem("token");
     await fetch(`http://127.0.0.1:8000/api/complaint/${acceptResolutionModalId}/accept/`, {
