@@ -15,12 +15,22 @@ const AddComplaint = () => {
     correspondentAddress: '',
     category: '',
     complaint_text: '',
+    is_jantadarbar_complain: false,
   });
 
   const [departments, setDepartments] = useState([]);
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showJanataCheckbox, setShowJanataCheckbox] = useState(false);
 
+  useEffect(() => {
+  const user_details = JSON.parse(localStorage.getItem("user_details") || "{}");
+  console.log(user_details);
+  if (user_details?.is_jantadarbar === true) {
+    setShowJanataCheckbox(true);
+  }
+}, []);
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
@@ -31,9 +41,7 @@ const AddComplaint = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
         if (!response.ok) throw new Error("Failed to fetch departments");
-
         const data = await response.json();
         setDepartments(data);
       } catch (error) {
@@ -41,12 +49,13 @@ const AddComplaint = () => {
         alert("Failed to load departments.");
       }
     };
-
     fetchDepartments();
   }, []);
 
+  
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
 
     // Limit mobile_number and pin_code length
     if (name === 'mobile_number' && value.length > 10) return;
@@ -54,7 +63,7 @@ const AddComplaint = () => {
 
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
@@ -92,11 +101,7 @@ const AddComplaint = () => {
   };
 
   const validateForm = () => {
-    const {
-      name, mobile_number, email,
-      village, panchyat, pin_code,
-      category, complaint_text
-    } = formData;
+    const { name, mobile_number, village, panchyat, pin_code, category, complaint_text, email } = formData;
 
     if (!name || !mobile_number || !village || !panchyat || !pin_code || !category || !complaint_text) {
       alert("Please fill in all required fields.");
@@ -126,9 +131,14 @@ const AddComplaint = () => {
 
     if (!validateForm()) return;
 
+    setIsSubmitting(true);
+
     const submissionData = new FormData();
     for (const key in formData) {
-      submissionData.append(key, formData[key]);
+      const value = typeof formData[key] === 'boolean'
+        ? formData[key].toString()
+        : formData[key];
+      submissionData.append(key, value);
     }
 
     images.forEach((image) => {
@@ -164,6 +174,7 @@ const AddComplaint = () => {
           correspondentAddress: '',
           category: '',
           complaint_text: '',
+          is_jantadarbar_complain: false,
         });
         setImages([]);
         setImagePreviews([]);
@@ -175,6 +186,8 @@ const AddComplaint = () => {
     } catch (error) {
       console.error("Submission error:", error);
       alert("Something went wrong. Try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -182,6 +195,21 @@ const AddComplaint = () => {
     <div className="complaint-form-container">
       <h2>Submit a Complaint</h2>
       <form onSubmit={handleSubmit} className="complaint-form">
+        {showJanataCheckbox && (
+          <div className="checkbox-wrapper-27 form-group checkbox-group">
+            <label className="checkbox">
+              Is this a Janata Darbar complaint?
+              <input
+                type="checkbox"
+                name="is_jantadarbar_complain"
+                checked={formData.is_jantadarbar_complain}
+                onChange={handleChange}
+              />
+              <span className="checkbox__icon"></span>
+            </label>
+          </div>
+        )}
+
         {[
           { label: "Full Name", name: "name", required: true },
           { label: "Mobile Number", name: "mobile_number", required: true },
@@ -252,7 +280,6 @@ const AddComplaint = () => {
             required
           />
         </div>
-
         <div className="form-group">
           <label>Upload Images (Optional, Max 5):</label>
           {images.map((_, index) => (
@@ -277,8 +304,8 @@ const AddComplaint = () => {
         </div>
 
         <div className="form-group">
-          <button type="submit" className="submit-btn">
-            Submit Complaint
+          <button type="submit" className="submit-btn" disabled={isSubmitting}>
+            {isSubmitting ? 'Submitting...' : 'Submit Complaint'}
           </button>
         </div>
       </form>

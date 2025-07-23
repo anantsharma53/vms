@@ -35,6 +35,7 @@ class User(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_recptionstaff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    is_jantadarbar= models.BooleanField(default=False)
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
     
 
@@ -153,6 +154,7 @@ class Complaint(models.Model):
     forward_remarks = models.TextField(blank=True, null=True)
     rejection_remarks = models.TextField(blank=True, null=True)
     accept_remarks = models.TextField(blank=True, null=True)
+    is_jantadarbar_complain = models.BooleanField(default=False)
 
 
 

@@ -122,6 +122,7 @@ class SignInView(APIView):
                 "has_applied": has_applied,  # Add has_applied status
                 "application_number": application_number,  # Add application number if exists
                 "department":user.department_id,
+                "is_jantadarbar": user.is_jantadarbar,
             }
             
             return JsonResponse(
@@ -342,6 +343,7 @@ class UserInformationAPIView(APIView):
                 "application_details": application_data,  # Include application details if exists
                 "application_number": application_number,
                 "department":user.department_id,
+                "is_jantadarbar": user.is_jantadarbar,
             }
 
             return Response(user_data, status=status.HTTP_200_OK)
@@ -423,6 +425,7 @@ class AllUserInformationAPIView(APIView):
                     "application_details": application_data,  # Include application details if exists
                     "application_number": application_number,
                     "department":user.department_id,
+                    "is_jantadarbar": user.is_jantadarbar,  # Include Janta Darbar ID status
                 }
 
                 # Append each user's data to the list
