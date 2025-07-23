@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 import "./AdminComplaints.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDoubleLeft, faAngleDoubleRight, faFilter, faPrint } from '@fortawesome/free-solid-svg-icons';
@@ -10,7 +11,7 @@ const AdminComplaints = () => {
   const [resolution, setResolution] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize] = useState(3);
+  const [pageSize] = useState(30);
   const [filters, setFilters] = useState({ complaint_id: "", category: "", start_date: "", end_date: "" });
   const [filterMenuVisible, setFilterMenuVisible] = useState(false);
   const [forwardRemarks, setForwardRemarks] = useState("");
@@ -170,6 +171,7 @@ const AdminComplaints = () => {
             <th>Department</th>
             <th>Complaint</th>
             <th>Media</th>
+            <th>Details</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -189,6 +191,12 @@ const AdminComplaints = () => {
                     onClick={() => handleImageClick(`http://127.0.0.1:8000${img.image}`)}
                   />
                 ))}
+              </td>
+              <td>
+                {/* New "View Details" column */}
+                <Link to={`/complaints/${complaint.id}`} className="view-details-link">
+                  View Details
+                </Link>
               </td>
               <td className="radio-actions">
                 {complaint.status === "admin_review" ? (

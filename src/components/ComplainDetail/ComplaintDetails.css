@@ -1,0 +1,232 @@
+/* src/components/ComplaintDetails.css */
+.complaint-details-container {
+    padding: 20px;
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+.top-buttons {
+    display: flex;
+    justify-content: flex-start; /* Align buttons to the start */
+    gap: 15px; /* Space between buttons */
+    margin-bottom: 25px;
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+}
+
+.complaint-details-container h1 {
+    color: #2c3e50;
+    margin-bottom: 25px;
+    text-align: center;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px 30px;
+    margin-bottom: 20px;
+}
+
+.detail-item {
+    font-size: 1em;
+    line-height: 1.5;
+    background-color: #fff;
+    padding: 12px 15px;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+    word-wrap: break-word; /* Ensure long text wraps */
+}
+
+.detail-item strong {
+    color: #4a69bd;
+    margin-right: 8px;
+    display: inline-block;
+    min-width: 120px;
+}
+
+.detail-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.media-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #e0e0e0;
+}
+
+.detail-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.detail-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.zoom-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.zoom-container {
+    max-width: 90%;
+    max-height: 90%;
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.zoom-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+    margin: auto;
+}
+
+.back-button {
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.back-button:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+}
+
+.download-button {
+    background-color: #28a745; /* Green */
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.download-button:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+}
+
+/* Status styling - kept consistent */
+.status-admin-review {
+    color: #ff9800;
+    font-weight: bold;
+}
+
+.status-accepted, .status-resolved {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.status-rejected {
+    color: #F44336;
+    font-weight: bold;
+}
+
+.status-pending {
+    color: #2196F3;
+    font-weight: bold;
+}
+
+.status-forwarded {
+    color: #9C27B0;
+    font-weight: bold;
+}
+
+.error {
+    color: #D32F2F;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
+    background-color: #FFCDD2;
+    border: 1px solid #EF9A9A;
+    border-radius: 8px;
+}
+
+/* New class for printable content - hide elements not intended for PDF */
+.printable-content .back-button,
+.printable-content .download-button {
+    display: none !important;
+}
+
+/* Adjust font sizes/margins for print to avoid cutting off text */
+@media print {
+    body {
+        -webkit-print-color-adjust: exact !important; /* For backgrounds and colors */
+        color-adjust: exact !important;
+    }
+    .complaint-details-container {
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+        max-width: 100%;
+    }
+    .top-buttons {
+        display: none; /* Hide buttons when printing */
+    }
+    .printable-content {
+        margin: 0;
+        padding: 15mm; /* Add some padding for print margins */
+        box-shadow: none;
+        border-radius: 0;
+    }
+    .complaint-details-container h1 {
+        font-size: 24pt;
+        margin-bottom: 20pt;
+    }
+    .detail-item {
+        font-size: 11pt;
+        padding: 8pt;
+        border: 1px solid #ccc;
+    }
+    .detail-item strong {
+        font-size: 11pt;
+    }
+    .media-gallery {
+        page-break-before: always; /* Ensure media starts on a new page in print */
+    }
+    .detail-image {
+        max-width: 150px; /* Smaller thumbnails for print */
+        height: auto;
+    }
+}

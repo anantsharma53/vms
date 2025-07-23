@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 import "./SolvedComplaints.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDoubleLeft, faAngleDoubleRight, faFilter, faPrint } from '@fortawesome/free-solid-svg-icons';
@@ -9,7 +10,7 @@ const SolvedComplaints = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize] = useState(3);
+  const [pageSize] = useState(30);
   const [filters, setFilters] = useState({
     complaint_id: "",
     category: "",
@@ -147,7 +148,7 @@ const SolvedComplaints = () => {
   return (
     <div className="complaints-container">
       <div className="header-buttons">
-        <h1>Solved Complaints (Accepted / Disposed)</h1>
+        <h1>Provide Resolution (For Accepted Complaint/ Disposed)</h1>
         <div className="icons">
           <FontAwesomeIcon icon={faFilter} onClick={toggleFilterMenu} className="fa-icon" />
           <FontAwesomeIcon icon={faPrint} onClick={() => window.print()} className="fa-icon" />
@@ -180,6 +181,7 @@ const SolvedComplaints = () => {
             <th>Complaint</th>
             <th>Media</th>
             <th>Status</th>
+            <th>Details</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -208,10 +210,17 @@ const SolvedComplaints = () => {
                     onClick={() => handleImageClick(`http://127.0.0.1:8000${img.image}`)}
                   />
                 ))} */}
+                
               </td>
               <td style={{ fontWeight: "bold", color: complaint.status === "disposed" ? "green" : "blue" }}>
                 {complaint.status.toUpperCase()}
               </td>
+              <td>
+                  {/* New "View Details" column */}
+                  <Link to={`/complaints/${complaint.id}`} className="view-details-link">
+                    View Details
+                  </Link>
+                </td>
               <td className="radio-actions">
                 {complaint.status === "admin_review" ? (
                   <div

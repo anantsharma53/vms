@@ -12,6 +12,7 @@ import HomeNew from './components/HomeNew/HomeNew';
 import ReceptionDashboard from './components/ReceptionDashboard/ReceptionDashboard';
 import ComplaintReceipt from './components/ComplaintReceipt/ComplaintReceipt';
 import UnderConstruction from './components/UnderConstruction/UnderConstruction';
+import ComplaintDetails from './components/ComplainDetail/ComplaintDetails';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path='/sessionexpires' element={<SessionExpired/>}/>
         <Route path='/admindasboard' element={<Admindasboard/>}/>
         <Route path='/complaintreceipt' element={<ComplaintReceipt/>}/>
+        <Route path="/complaints/:id" element={<ComplaintDetails />} />
       </Routes>
     </BrowserRouter>
   );

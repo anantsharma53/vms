@@ -19,6 +19,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 20px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
 }
 
 .dashboard-box:hover {
@@ -140,31 +141,50 @@
 /* CARD */
 .feature-card {
   position: relative;
-  background-color: #ffffff;
+  background-image: url("https://www.baltana.com/files/wallpapers-4/Abstract-Background-HD-Wallpaper-14095.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top;
+  background-attachment: local; /* background scrolls with content */
+
   border-radius: 1rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   padding: 1.5rem;
   transition: transform 0.3s ease;
-  overflow: hidden;
-  z-index: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 320px;
+  max-height: 320px;
+
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+
+  /* Optional overlay for readability */
+  color: #111827;
+  background-blend-mode: overlay;
+  background-color: rgba(255, 255, 255, 0.75); /* adds a light overlay */
 }
 
-/* BACKGROUND IMAGE INSIDE EACH CARD */
+
+.feature-card::-webkit-scrollbar {
+  width: 6px;
+}
+.feature-card::-webkit-scrollbar-thumb {
+  background-color: #bbb;
+  border-radius: 4px;
+}
+
 .feature-card::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background-image: url("https://www.baltana.com/files/wallpapers-4/Abstract-Background-HD-Wallpaper-14095.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 0.4;
-  /* Control transparency */
-  z-index: -1;
-  filter: blur(1px);
-  /* Optional: soften image */
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
   border-radius: 1rem;
 }
+
+
 
 /* HOVER EFFECT */
 .feature-card:hover {

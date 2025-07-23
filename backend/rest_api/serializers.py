@@ -50,7 +50,8 @@ class ComplaintSerializer(serializers.ModelSerializer):
             'correspondentAddress', 'category',
             'complaint_text', 'resolution', 'feedback', 'created_at',
             'images', 'department', 'status',
-            'forwarded_to', 'forward_remarks', 'rejection_remarks'
+            'forwarded_to', 'forward_remarks', 'rejection_remarks','accept_remarks','rejection_remarks',
+            'forward_remarks',
         ]
         extra_kwargs = {
             'user': {'required': False},

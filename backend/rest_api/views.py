@@ -708,7 +708,7 @@ class ComplaintDetailView(APIView):
     permission_classes=[IsAuthenticated]
     def get(self, request, pk, *args, **kwargs):
         # Retrieve the complaint for the authenticated user
-        complaint = get_object_or_404(Complaint, pk=pk, user=request.user)
+        complaint = get_object_or_404(Complaint, pk=pk)
         serializer = ComplaintSerializer(complaint)
         return Response(serializer.data, status=status.HTTP_200_OK)
     

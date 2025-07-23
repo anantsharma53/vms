@@ -37,7 +37,7 @@ const Icon = ({ name, className = "icon" }) => {
     mapPin: "📍",
     globe: "🌐",
     reception: "💁",
-    
+
   };
 
   return <span className={className}>{icons[name] || "•"}</span>;
@@ -144,7 +144,7 @@ const AdminDefaultDashboard = () => {
                 <div className="feature-card primary">
                   {/* <div className="feature-icon primary">
                 <Icon name="fileText" className="icon large" />
-              </div> */}
+                </div> */}
                   <h3 className="feature-title">Total Complaints</h3>
                   <p className="feature-description">
                     Total complaints received in the system.
@@ -156,7 +156,7 @@ const AdminDefaultDashboard = () => {
                 <div className="feature-card secondary">
                   {/* <div className="feature-icon secondary">
                 <Icon name="building" className="icon large" />
-              </div> */}
+                </div> */}
                   <h3 className="feature-title">Departmentywise Complaints</h3>
                   <p className="feature-description">
                     Distribution of complaints department-wise.

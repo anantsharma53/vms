@@ -3,7 +3,7 @@ import "./DisplayComplaints.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDoubleLeft, faAngleDoubleRight, faFilter, faPrint } from '@fortawesome/free-solid-svg-icons';
 import ComplaintReceipt from "../ComplaintReceipt/ComplaintReceipt";
-
+import {Link} from 'react-router-dom';
 const DisplayComplaints = () => {
   const [departments, setDepartments] = useState([]);
   const [showReceipt, setShowReceipt] = useState(false);
@@ -14,7 +14,7 @@ const DisplayComplaints = () => {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize] = useState(3);
+  const [pageSize] = useState(30);
   const [filters, setFilters] = useState({ complaint_id: "", category: "", start_date: "", end_date: "" });
   const [filterMenuVisible, setFilterMenuVisible] = useState(false);
   const [receiptData, setReceiptData] = useState(null);
@@ -170,11 +170,11 @@ const DisplayComplaints = () => {
           <tr>
             <th>ID</th>
             <th>Dept</th>
-            <th>Complaint</th>
+            {/* <th>Complaint</th> */}
             <th>Status</th>
             <th>Images</th>
             <th>Document</th>
-            <th>Actions</th>
+            <th>Actions / Vew</th>
           </tr>
         </thead>
         <tbody>
@@ -182,7 +182,7 @@ const DisplayComplaints = () => {
             <tr key={complaint.id}>
               <td>{complaint.id}</td>
               <td>{getDepartmentNameFromList(parseInt(complaint.category))}</td>
-              <td>{complaint.complaint_text}</td>
+              {/* <td>{complaint.complaint_text}</td> */}
               <td><span className={`status-badge status-${complaint.status}`}>{complaint.status}</span></td>
               <td>
                 {complaint.images && complaint.images.map((image) => (
@@ -201,6 +201,8 @@ const DisplayComplaints = () => {
                 )}
               </td>
               <td>
+                <Link to={`/complaints/${complaint.id}`} className="view-details-link">
+                  View Details</Link>
                 <button onClick={() => handleSeeResolution(complaint.id)}>See</button>
                 <button onClick={() => handleViewReceipt(complaint.id)}>Print</button>
                 {userRole === "reception" && <button onClick={() => handleDelete(complaint.id)}>Delete</button>}
