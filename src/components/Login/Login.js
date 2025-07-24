@@ -107,7 +107,7 @@ function Login() {
                 <Header />
 
                 <h2>Visitor Monitoring System</h2>
-                <h2>Reception Login</h2>
+                {/* <h2>Reception Login</h2> */}
                 <div className="login-content">
 
 

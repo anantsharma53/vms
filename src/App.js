@@ -24,7 +24,7 @@ function App() {
       <Route path='/register' element={<Sign />} />
         <Route path='/reception' element={<Login />} />
         <Route path='/' element={<HomeNew />} />
-        <Route path='/public' element={<UnderConstruction/>}/>
+        <Route path='/public' element={<Login/>}/>
         <Route path='/reception-dashboard' element={<VleLayout />} />
         <Route path='/public-dashboard' element={<VleLayout />} />
         <Route path='/dashboard' element={<Layout />} />

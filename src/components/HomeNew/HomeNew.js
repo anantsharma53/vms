@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "./HomeNew.css";
 import { useNavigate } from 'react-router-dom';
 import AdminDefaultDashboard from "../AdminDefaultDashboard/AdminDefaultDashboard";
+import ImageCarousel from "../ImageCarousel/ImageCarousel";
 // Simple icon components (you would replace these with actual icon library or SVGs)
 const Icon = ({ name, className = "icon" }) => {
   const icons = {
@@ -145,6 +147,10 @@ const HomeNew = () => {
       </header>
 
       {/* Hero Section */}
+      <div className="features">
+          <ImageCarousel/>
+            
+       </div>
       <section className="hero"
         style={{
           background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(34, 197, 94, 0.1) 50%, rgba(239, 68, 68, 0.1) 100%)',
@@ -177,8 +183,9 @@ const HomeNew = () => {
             </div> */}
           </div>
         </div>
+        
       </section>
-
+              
       {/* Features Section */}
       {/* <section className="features">
         <div className="container">
@@ -326,17 +333,17 @@ const HomeNew = () => {
           </div>
 
           <div className="actions-grid">
-            <button className="action-button" >
+            <button className="action-button" onClick={() => navigate('/register')}>
               <Icon name="userCheck" className="action-icon xl" />
               <div className="action-content" >
-                <div className="action-title">New Registration</div>
+                <div className="action-title" >New Registration</div>
                 <div className="action-desc">Register for visit</div>
               </div>
             </button>
 
-            <button className="action-button secondary" >
+            <button className="action-button secondary" onClick={() => navigate('/public')}>
               <Icon name="search" className="action-icon secondary xl" />
-              <div className="action-content">
+              <div className="action-content" >
                 <div className="action-title">Check Status</div>
                 <div className="action-desc">Track your visit</div>
               </div>
