@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './Admin.css'
 import Header from '../Header/Header';
 import { useNavigate } from 'react-router-dom'
@@ -90,7 +91,7 @@ const AdminLogin = () => {
             onClick={() => navigate('/')}
           >
             <img src="https://upload.wikimedia.org/wikipedia/commons/6/60/Firefox_Home_-_logo.png"
-                        style={{ width: '80px' }} alt="logo" />
+              style={{ width: '80px' }} alt="logo" />
           </div>
           <h2>Visitor Monitoring System</h2>
           <h2>Officer Login</h2>
@@ -113,10 +114,18 @@ const AdminLogin = () => {
               value={user.password}
               className="form-control"
             />
+            <div className="forgot-password-link" style={{ marginTop: '10px', textAlign: 'right' }}>
+              <Link to="/forgot-password" style={{ color: '#2563eb', textDecoration: 'underline' }}>
+                Forgot Password?
+              </Link>
+            </div>
+
             <button type="submit" >Login</button>
-            <a href="#">Forget Password?</a>
+
           </form>
+
         </div>
+
       </div>
 
     </>

@@ -173,10 +173,16 @@ function Login() {
                                         style={styles.input}
                                     />
                                 </div>
+                                <div className="forgot-password-link" style={{ marginTop: '10px', textAlign: 'right' }}>
+                                <Link to="/forgot-password" style={{ color: '#2563eb', textDecoration: 'underline' }}>
+                                    Forgot Password?
+                                </Link>
+                            </div>
                                 <button type="submit" style={styles.button}>
                                     Log In
                                 </button>
                             </form>
+                            
                         </div>
                     </div>
                 </div>

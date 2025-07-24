@@ -4,12 +4,14 @@ from django.conf.urls.static import static
 from .views import ( SignUpView, SignInView, JobApplicationAPIView, ApplicantFileUploadAPIView,ApplicantByPostAPIView,ComplaintDetailView,ComplaintListView,JharsewaApplicantAPIView,ApplicantByPostAPIView,
                     AllUserInformationAPIView,UserInformationAPIView,ComplaintView,FeedbackView,UpdatePasswordAPIView,AdminComplaintView,SearchAdmitCardView,ComplaintCountAPIView,ComplaintResolutionView,ApplicantInformationView
                     ,DepartmentListCreateAPIView,DepartmentDetailAPIView,ComplaintAcceptView,ComplaintRejectView,ComplaintForwardView,ComplaintDisposeView,ComplaintReassignByAdminView,
-                    SolvedComplaintsView,ComplaintResolutionAddView)
+                    SolvedComplaintsView,ComplaintResolutionAddView,RequestPasswordResetView,ResetPasswordConfirmView)
 
 
 urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
     path('signin/', SignInView.as_view(), name='signin'),
+    path('request-password-reset/', RequestPasswordResetView.as_view(), name='request-password-reset'),
+    path('reset-password/<uidb64>/<token>/', ResetPasswordConfirmView.as_view(), name='reset-password-confirm'),
     path('departments/', DepartmentListCreateAPIView.as_view(), name='department-list-create'),
     path('departments/<int:pk>/', DepartmentDetailAPIView.as_view(), name='department-detail'),
     path('job-application/', JobApplicationAPIView.as_view(), name='job-application'),

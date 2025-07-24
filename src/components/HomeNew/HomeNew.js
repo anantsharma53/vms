@@ -74,7 +74,12 @@ const HomeNew = () => {
                 Home
               </button>
               <button className="nav-button">Services</button>
-              <button className="nav-button">Contact</button>
+              <button className="nav-button" 
+              onClick={() => {
+                  
+                  navigate('/register');
+                }}
+              >Register</button>
               <button className="nav-button">हिंदी</button>
 
               <div className={`dropdown ${dropdownOpen ? "open" : ""}`}>

@@ -23,6 +23,10 @@ from django.utils import timezone
 import requests
 from django.conf import settings
 from django.utils.html import escape
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_decode
 
 def send_email_with_resend(complaint, subject, message_html):
     try:
@@ -66,20 +70,36 @@ def send_email_with_resend(complaint, subject, message_html):
         }
     )
 
-# def send_email_with_resend(complaint, subject, html_content):
-#     url = "https://api.resend.com/emails"
-#     headers = {
-#         "Authorization": f"Bearer {settings.RESEND_API_KEY}",
-#         "Content-Type": "application/json"
-#     }
-#     data = {
-#         "from": "Jamtara Complaints <noreply@jamtara.gov.in>",
-#         "to": [complaint.email],
-#         "subject": subject,
-#         "html": html_content
-#     }
-#     response = requests.post(url, json=data, headers=headers)
-#     return response.json()
+def send_signup_email(user):
+    html_content = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+            <h2 style="color: #0066cc;">👋 Welcome to Visitor Management Portal</h2>
+            <p>Dear <strong>{escape(user.name)}</strong>,</p>
+            <p>Your User Name  <strong>{escape(user.username)}</strong> .</p>
+            <p>Thank you for signing up with us. Your account has been created successfully.</p>
+            <p>You can now log in and start submitting complaints or accessing services as per your role.</p>
+            <p style="margin-top: 30px;">Regards,<br><strong>District Administration, Jamtara</strong></p>
+            <hr style="margin: 30px 0;">
+            <p style="font-size: 12px; color: #888;">
+                This is an automated message from the Jamtara Portal. Please do not reply to this email.
+            </p>
+        </div>
+    """
+
+    requests.post(
+        "https://api.resend.com/emails",
+        headers={
+            "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+            "Content-Type": "application/json"
+        },
+        json={
+            "from": "Jamtara VMS Registration <noreply@jamtaradistrict.in>",
+            "to": [user.email],
+            "subject": "Welcome to Jamtara Portal",
+            "html": html_content,
+        }
+    )
+
 
 
 class SignUpView(APIView):
@@ -88,13 +108,103 @@ class SignUpView(APIView):
         if serializer.is_valid():
             user = serializer.save()
             refresh = RefreshToken.for_user(user)
+            # Send welcome email
+            send_signup_email(user)
             return JsonResponse(
                 {"refresh": str(refresh), "access": str(refresh.access_token)},
                 status=status.HTTP_201_CREATED,
             )
         return JsonResponse(serializer.error, status.HTTP_400_BAD_REQUEST, safe=False)
 
+class RequestPasswordResetView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        if not email:
+            return Response({"detail": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email)
+
+            # Generate UID and token
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+            # reset_link = f"{settings."http://localhost:3000"}/reset-password/{uid}/{token}/"
+            reset_link = f"http://localhost:3000/reset-password/{uid}/{token}/"
+
+            # Create HTML email
+            html_content = f"""
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                    <h2 style="color: #d9534f;">🔐 Reset Your Password</h2>
+                    <p>Dear <strong>{escape(user.name)}</strong>,</p>
+                    <p>We received a request to reset your password for your account on the Jamtara Portal.</p>
+                    <p>Click the button below to reset your password:</p>
+                    <p style="text-align: center; margin: 30px 0;">
+                        <a href="{reset_link}" style="background-color: #0066cc; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px;">
+                            Reset Password
+                        </a>
+                    </p>
+                    <p>If you did not request this, you can safely ignore this email.</p>
+                    <p style="margin-top: 30px;">Regards,<br><strong>District Administration, Jamtara</strong></p>
+                    <hr style="margin: 30px 0;">
+                    <p style="font-size: 12px; color: #888;">
+                        This is an automated message from the Jamtara Portal. Please do not reply to this email.
+                    </p>
+                </div>
+            """
+
+            # Send email via Resend
+            requests.post(
+                "https://api.resend.com/emails",
+                headers={
+                    "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "from": "Jamtara VMS <noreply@jamtaradistrict.in>",
+                    "to": [user.email],
+                    "subject": "Password Reset Request - Jamtara Portal",
+                    "html": html_content,
+                }
+            )
+
+        except User.DoesNotExist:
+            # Don't disclose whether email exists
+            pass
+
+        return Response(
+            {"detail": "If an account with that email exists, a password reset link has been sent."},
+            status=status.HTTP_200_OK
+        )
+class ResetPasswordConfirmView(APIView):
+    def post(self, request, uidb64, token):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return Response({"detail": "Invalid link."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not default_token_generator.check_token(user, token):
+            return Response({"detail": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+
+        password = request.data.get("password")
+        confirm_password = request.data.get("confirm_password")
+
+        if not password or not confirm_password:
+            return Response({"detail": "Both password fields are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if password != confirm_password:
+            return Response({"detail": "Passwords do not match."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(password)
+        user.save()
+
+        return Response({"detail": "Password has been reset successfully."}, status=status.HTTP_200_OK)
+
+
+
 class SignInView(APIView):
+
+
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         user_data = {}
