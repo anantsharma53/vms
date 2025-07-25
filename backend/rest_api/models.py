@@ -156,13 +156,22 @@ class Complaint(models.Model):
     accept_remarks = models.TextField(blank=True, null=True)
     is_jantadarbar_complain = models.BooleanField(default=False)
 
-
-
 class ComplaintImage(models.Model):
-    complaint = models.ForeignKey(Complaint, related_name='images', on_delete=models.CASCADE)
+    IMAGE_TYPE_CHOICES = [
+        ('complaint', 'Complaint Image'),
+        ('resolution', 'Resolution Image'),
+    ]
+
+    complaint = models.ForeignKey(Complaint, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='complaint_images/')
-    def __str__(self):
-        return self.name
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    image_type = models.CharField(max_length=20, choices=IMAGE_TYPE_CHOICES, default='complaint')  # Default set
+
+# class ComplaintImage(models.Model):
+#     complaint = models.ForeignKey(Complaint, related_name='images', on_delete=models.CASCADE)
+#     image = models.ImageField(upload_to='complaint_images/')
+#     def __str__(self):
+#         return self.name
 
 class ComplaintAction(models.Model):
     complaint = models.ForeignKey(Complaint, on_delete=models.CASCADE, related_name="actions")

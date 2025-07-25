@@ -8,6 +8,8 @@ const SolvedComplaints = () => {
   const [departments, setDepartments] = useState([]);
   const [complaints, setComplaints] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [images, setImages] = useState([null]);  // Starts with 1 field
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize] = useState(30);
@@ -107,22 +109,59 @@ const SolvedComplaints = () => {
   const handleImageClick = (url) => setSelectedImage(url);
   const closeZoom = () => setSelectedImage(null);
 
+  // const handleAccept = async () => {
+  //   const token = localStorage.getItem("token");
+
+  //   try {
+  //     const response = await fetch(`http://127.0.0.1:8000/api/complaint/${acceptResolutionModalId}/resolve/`, {
+  //       method: "PATCH",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: JSON.stringify({ remarks: resolution }),
+  //     });
+
+  //     if (response.ok) {
+  //       alert("✅ Complaint accepted successfully!");
+  //       setAcceptResolutionModalId(null);
+  //       fetchComplaints(currentPage);
+  //     } else {
+  //       const errorData = await response.json();
+  //       alert(`❌ Error: ${errorData.error || "Something went wrong."}`);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     alert("❌ Network error or server is unreachable.");
+  //   }
+  // };
   const handleAccept = async () => {
     const token = localStorage.getItem("token");
+
+    const formData = new FormData();
+    formData.append("remarks", resolution);
+
+    images.forEach((file) => {
+      if (file) {
+        formData.append("images", file); // Make sure your backend expects 'images' as a list
+      }
+    });
 
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/complaint/${acceptResolutionModalId}/resolve/`, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // DO NOT set 'Content-Type' manually when using FormData
         },
-        body: JSON.stringify({ remarks: resolution }),
+        body: formData,
       });
 
       if (response.ok) {
-        alert("✅ Complaint accepted successfully!");
+        alert("✅ Resolution Sent to Complainer!");
         setAcceptResolutionModalId(null);
+        setResolution("");
+        setImages([]);
+        setImagePreviews([]);
         fetchComplaints(currentPage);
       } else {
         const errorData = await response.json();
@@ -144,7 +183,24 @@ const SolvedComplaints = () => {
     fetchComplaints();
     fetchDepartments();
   }, [filters]);
+  const handleAddImageField = () => {
+    if (images.length < 5) {
+      setImages([...images, null]);
+    }
+  };
 
+  const handleImageChange = (e, index) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const updatedImages = [...images];
+    updatedImages[index] = file;
+    setImages(updatedImages);
+
+    const updatedPreviews = [...imagePreviews];
+    updatedPreviews[index] = URL.createObjectURL(file);
+    setImagePreviews(updatedPreviews);
+  };
   return (
     <div className="complaints-container">
       <div className="header-buttons">
@@ -210,17 +266,17 @@ const SolvedComplaints = () => {
                     onClick={() => handleImageClick(`http://127.0.0.1:8000${img.image}`)}
                   />
                 ))} */}
-                
+
               </td>
               <td style={{ fontWeight: "bold", color: complaint.status === "disposed" ? "green" : "blue" }}>
                 {complaint.status.toUpperCase()}
               </td>
               <td>
-                  {/* New "View Details" column */}
-                  <Link to={`/complaints/${complaint.id}`} className="view-details-link">
-                    View Details
-                  </Link>
-                </td>
+                {/* New "View Details" column */}
+                <Link to={`/complaints/${complaint.id}`} className="view-details-link">
+                  View Details
+                </Link>
+              </td>
               <td className="radio-actions">
                 {complaint.status === "admin_review" ? (
                   <div
@@ -236,13 +292,21 @@ const SolvedComplaints = () => {
                   <button
                     className="accept-button"
                     onClick={() => handleAcceptOpenModal(complaint.id)}
+                    disabled={complaint.status === "disposed" || complaint.resolution != null}
                     style={{
                       padding: "6px 12px",
                       backgroundColor: "#28a745",
                       color: "#fff",
                       border: "none",
                       borderRadius: "4px",
-                      cursor: "pointer",
+                      cursor:
+                        complaint.status === "disposed" || complaint.resolution != null
+                          ? "not-allowed"
+                          : "pointer",
+                      opacity:
+                        complaint.status === "disposed" || complaint.resolution != null
+                          ? 0.6
+                          : 1,
                       fontWeight: "bold"
                     }}
                   >
@@ -272,7 +336,7 @@ const SolvedComplaints = () => {
       {/* Accept Modal */}
       {acceptResolutionModalId && (
         <div className="resolution-overlay">
-          <div className="resolution-container">
+          {/* <div className="resolution-container">
             <h3>Enter Resolution Remarks  for Complaint ID: {acceptResolutionModalId}</h3>
             <textarea
               value={resolution}
@@ -283,7 +347,59 @@ const SolvedComplaints = () => {
               <button onClick={handleAccept}>Submit</button>
               <button onClick={() => setAcceptResolutionModalId(null)}>Cancel</button>
             </div>
+          </div> */}
+          <div className="resolution-container">
+            <h3>Enter Resolution Remarks for Complaint ID: {acceptResolutionModalId}</h3>
+
+            <textarea
+              value={resolution}
+              onChange={(e) => setResolution(e.target.value)}
+              placeholder="Enter Remarks here"
+            ></textarea>
+
+            <label>Upload Images (Optional, Max 5):</label>
+            {images.map((_, index) => (
+              <div key={index} className="image-upload-field">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageChange(e, index)}
+                />
+                {imagePreviews[index] && (
+                  <div className="image-preview">
+                    <img
+                      src={imagePreviews[index]}
+                      alt={`Preview ${index + 1}`}
+                      height="60"
+                      style={{ marginTop: '5px' }}
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {images.length < 5 && (
+              <button
+                type="button"
+                className="add-image-btn"
+                onClick={handleAddImageField}
+              >
+                Add More Image
+              </button>
+            )}
+
+            <div className="modal-buttons">
+              <button onClick={handleAccept}>Submit</button>
+              <button onClick={() => {
+                setAcceptResolutionModalId(null);
+                setImages([]);
+                setImagePreviews([]);
+              }}>
+                Cancel
+              </button>
+            </div>
           </div>
+
         </div>
       )}
     </div>

@@ -1060,11 +1060,38 @@ class ComplaintForwardView(APIView):
 
         return Response({"message": "Complaint forwarded to subsidiary office."})
 
+# class ComplaintResolutionAddView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def patch(self, request, pk):
+#         complaint = get_object_or_404(Complaint, pk=pk)
+#         if request.user.department_id != complaint.category:
+#             return Response({"error": "Unauthorized"}, status=403)
+
+#         complaint.status = 'accepted'
+#         complaint.resolution = request.data.get('remarks')
+#         complaint.save()
+
+#         ComplaintAction.objects.create(
+#             complaint=complaint,
+#             performed_by=request.user,
+#             action="accepted",
+#             remarks=request.data.get('remarks')
+#         )
+#         send_email_with_resend(
+#             complaint,
+#             "✅ Complaint Resolved",
+#             f"<p>Your complaint has been <strong>resolved</strong>.</p><p><em>Resolution:</em> {escape(request.data.get('remarks'))}</p>"
+#         )
+
+#         return Response({"message": "Complaint Resolution added."})
 class ComplaintResolutionAddView(APIView):
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
     def patch(self, request, pk):
         complaint = get_object_or_404(Complaint, pk=pk)
+
         if request.user.department_id != complaint.category:
             return Response({"error": "Unauthorized"}, status=403)
 
@@ -1072,12 +1099,21 @@ class ComplaintResolutionAddView(APIView):
         complaint.resolution = request.data.get('remarks')
         complaint.save()
 
+        # Save resolution images with type='resolution'
+        for img in request.FILES.getlist('images'):
+            ComplaintImage.objects.create(
+                complaint=complaint,
+                image=img,
+                image_type='resolution'
+            )
+
         ComplaintAction.objects.create(
             complaint=complaint,
             performed_by=request.user,
             action="accepted",
             remarks=request.data.get('remarks')
         )
+
         send_email_with_resend(
             complaint,
             "✅ Complaint Resolved",
@@ -1124,6 +1160,8 @@ class ComplaintReassignByAdminView(APIView):
         complaint.category=new_dept.id
         complaint.resolution = None  # Reset resolution when reassigning
         complaint.status = "pending"
+        complaint.accept_remarks = None  # Reset accept remarks
+        complaint.rejection_remarks = None
         complaint.forward_remarks = request.data.get("remarks", "")
         complaint.save()
 
