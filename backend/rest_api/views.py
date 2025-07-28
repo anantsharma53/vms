@@ -27,6 +27,13 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
+from captcha.image import ImageCaptcha
+import random
+import string
+import base64
+from io import BytesIO
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 def send_email_with_resend(complaint, subject, message_html):
     try:
@@ -99,8 +106,31 @@ def send_signup_email(user):
             "html": html_content,
         }
     )
+def generate_captcha(request):
+    captcha_text = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+    print("Generated CAPTCHA text:", captcha_text)
+    request.session['captcha_text'] = captcha_text  # ✅ Store in session
+    request.session.save()
+    print("Session ID:", request.session.session_key)
+    print("Captcha Stored:", request.session.get('captcha_text'))
+    image = ImageCaptcha()
+    data = image.generate(captcha_text)
+    image_data = base64.b64encode(data.read()).decode('utf-8')
+    image_data_url = f"data:image/png;base64,{image_data}"
+    return JsonResponse({'captcha_image': image_data_url})
 
-
+# def generate_captcha(request):
+#     # Generate random 5-character text
+#     captcha_text = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+#     # Store it in session (or database or Redis)
+#     request.session['captcha_text'] = captcha_text
+#     print("Generated CAPTCHA text:", captcha_text)  # Debugging line to check generated text
+#     request.session.modified = True 
+#     # Generate CAPTCHA image
+#     image = ImageCaptcha()
+#     data = image.generate(captcha_text)
+#     image_data = base64.b64encode(data.read()).decode('utf-8')
+#     return JsonResponse({'captcha_image': f'data:image/png;base64,{image_data}'})
 
 class SignUpView(APIView):
     def post(self, request):
@@ -202,51 +232,146 @@ class ResetPasswordConfirmView(APIView):
 
 
 
+# class SignInView(APIView):
+#     def post(self, request):
+#         serializer = LoginSerializer(data=request.data)
+#         user_data = {}
+#         if serializer.is_valid():
+#             user = serializer.validated_data
+#             refresh = RefreshToken.for_user(user)
+            
+#             # Fetch user's application information if it exists
+#             application = ApplicantInformation.objects.filter(user=user).first()
+#             has_applied = application is not None
+#             application_number = application.application_number if application else None
+            
+#             user_data = {
+#                 "id": user.id,
+#                 "username": user.username,
+#                 "panchyat": user.panchyat,
+#                 "village": user.village,
+#                 "email": user.email,
+#                 "name": user.name,
+#                 "mobile_number": user.mobile_number,
+#                 "is_recptionstaff": user.is_recptionstaff,
+#                 "is_candiate": user.is_candidate,
+#                 "is_staff": user.is_staff,
+#                 "is_superuser": user.is_superuser,
+#                 "has_applied": has_applied,  # Add has_applied status
+#                 "application_number": application_number,  # Add application number if exists
+#                 "department":user.department_id,
+#                 "is_jantadarbar": user.is_jantadarbar,
+#             }
+            
+#             return JsonResponse(
+#                 {
+#                     "user": user_data,
+#                     "refresh": str(refresh),
+#                     "access": str(refresh.access_token),
+#                 },
+#                 status=status.HTTP_201_CREATED,
+#             )
+#         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST, safe=False)
+
+# class SignInView(APIView):
+#     def post(self, request):
+#         # Step 1: CAPTCHA Validation
+#         user_input_captcha = request.data.get('captcha')
+#         correct_captcha = request.session.get('captcha_text')
+
+#         if not user_input_captcha or user_input_captcha.lower() != (correct_captcha or '').lower():
+#             return JsonResponse({'error': 'Invalid CAPTCHA'}, status=400)
+
+#         # Step 2: Validate credentials
+#         serializer = LoginSerializer(data=request.data)
+#         user_data = {}
+#         if serializer.is_valid():
+#             user = serializer.validated_data
+#             refresh = RefreshToken.for_user(user)
+
+#             application = ApplicantInformation.objects.filter(user=user).first()
+#             has_applied = application is not None
+#             application_number = application.application_number if application else None
+
+#             user_data = {
+#                 "id": user.id,
+#                 "username": user.username,
+#                 "panchyat": user.panchyat,
+#                 "village": user.village,
+#                 "email": user.email,
+#                 "name": user.name,
+#                 "mobile_number": user.mobile_number,
+#                 "is_recptionstaff": user.is_recptionstaff,
+#                 "is_candiate": user.is_candidate,
+#                 "is_staff": user.is_staff,
+#                 "is_superuser": user.is_superuser,
+#                 "has_applied": has_applied,
+#                 "application_number": application_number,
+#                 "department": user.department_id,
+#                 "is_jantadarbar": user.is_jantadarbar,
+#             }
+
+#             return JsonResponse(
+#                 {
+#                     "user": user_data,
+#                     "refresh": str(refresh),
+#                     "access": str(refresh.access_token),
+#                 },
+#                 status=status.HTTP_201_CREATED,
+#             )
+
+#         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST, safe=False)
+@method_decorator(csrf_exempt, name='dispatch')
 class SignInView(APIView):
-
-
     def post(self, request):
+        # ✅ Step 1: CAPTCHA Validation
+        user_input_captcha = request.data.get('captcha')
+        correct_captcha = request.session.get('captcha_text')
+        print("Captcha entered:", user_input_captcha)
+        print("Captcha expected:", correct_captcha)
+        print("Session ID during login:", request.session.session_key)
+        if not user_input_captcha or user_input_captcha.lower() != (correct_captcha or '').lower():
+            return JsonResponse({'error': 'Invalid CAPTCHA'}, status=400)
+
+        # ✅ Step 2: Validate login credentials via LoginSerializer
         serializer = LoginSerializer(data=request.data)
-        user_data = {}
-        if serializer.is_valid():
-            user = serializer.validated_data
-            refresh = RefreshToken.for_user(user)
-            
-            # Fetch user's application information if it exists
-            application = ApplicantInformation.objects.filter(user=user).first()
-            has_applied = application is not None
-            application_number = application.application_number if application else None
-            
-            user_data = {
-                "id": user.id,
-                "username": user.username,
-                "panchyat": user.panchyat,
-                "village": user.village,
-                "email": user.email,
-                "name": user.name,
-                "mobile_number": user.mobile_number,
-                "is_recptionstaff": user.is_recptionstaff,
-                "is_candiate": user.is_candidate,
-                "is_staff": user.is_staff,
-                "is_superuser": user.is_superuser,
-                "has_applied": has_applied,  # Add has_applied status
-                "application_number": application_number,  # Add application number if exists
-                "department":user.department_id,
-                "is_jantadarbar": user.is_jantadarbar,
-            }
-            
-            return JsonResponse(
-                {
-                    "user": user_data,
-                    "refresh": str(refresh),
-                    "access": str(refresh.access_token),
-                },
-                status=status.HTTP_201_CREATED,
-            )
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST, safe=False)
+        if not serializer.is_valid():
+            return JsonResponse({'error': 'Incorrect Username or Password'}, status=400)
 
+        user = serializer.validated_data  # this is the authenticated user
+        refresh = RefreshToken.for_user(user)
 
+        # ✅ Optional: Check if the user has applied (ApplicantInformation)
+        application = ApplicantInformation.objects.filter(user=user).first()
+        has_applied = bool(application)
+        application_number = application.application_number if application else None
 
+        # ✅ Prepare user data for frontend
+        user_data = {
+            "id": user.id,
+            "username": user.username,
+            "name": user.name,
+            "email": user.email,
+            "mobile_number": user.mobile_number,
+            "panchyat": user.panchyat,
+            "village": user.village,
+            "is_recptionstaff": user.is_recptionstaff,
+            "is_candiate": user.is_candidate,
+            "is_staff": user.is_staff,
+            "is_superuser": user.is_superuser,
+            "is_jantadarbar": user.is_jantadarbar,
+            "department": user.department_id,
+            "has_applied": has_applied,
+            "application_number": application_number,
+        }
+
+        # ✅ Return JSON with tokens + user info
+        return JsonResponse({
+            "user": user_data,
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+        }, status=200)
+    
 class DepartmentListCreateAPIView(APIView):
     def get(self, request):
         departments = Department.objects.all()
@@ -1060,31 +1185,7 @@ class ComplaintForwardView(APIView):
 
         return Response({"message": "Complaint forwarded to subsidiary office."})
 
-# class ComplaintResolutionAddView(APIView):
-#     permission_classes = [IsAuthenticated]
 
-#     def patch(self, request, pk):
-#         complaint = get_object_or_404(Complaint, pk=pk)
-#         if request.user.department_id != complaint.category:
-#             return Response({"error": "Unauthorized"}, status=403)
-
-#         complaint.status = 'accepted'
-#         complaint.resolution = request.data.get('remarks')
-#         complaint.save()
-
-#         ComplaintAction.objects.create(
-#             complaint=complaint,
-#             performed_by=request.user,
-#             action="accepted",
-#             remarks=request.data.get('remarks')
-#         )
-#         send_email_with_resend(
-#             complaint,
-#             "✅ Complaint Resolved",
-#             f"<p>Your complaint has been <strong>resolved</strong>.</p><p><em>Resolution:</em> {escape(request.data.get('remarks'))}</p>"
-#         )
-
-#         return Response({"message": "Complaint Resolution added."})
 class ComplaintResolutionAddView(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
