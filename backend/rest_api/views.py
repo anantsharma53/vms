@@ -132,19 +132,41 @@ def generate_captcha(request):
 #     image_data = base64.b64encode(data.read()).decode('utf-8')
 #     return JsonResponse({'captcha_image': f'data:image/png;base64,{image_data}'})
 
+# class SignUpView(APIView):
+#     def post(self, request):
+#         serializer = UserSerializer(data=request.data)
+#         if serializer.is_valid():
+#             user = serializer.save()
+#             refresh = RefreshToken.for_user(user)
+#             # Send welcome email
+#             send_signup_email(user)
+#             return JsonResponse(
+#                 {"refresh": str(refresh), "access": str(refresh.access_token)},
+#                 status=status.HTTP_201_CREATED,
+#             )
+#         return JsonResponse(serializer.error, status.HTTP_400_BAD_REQUEST, safe=False)
+
 class SignUpView(APIView):
     def post(self, request):
+        user_input_captcha = request.data.get('captcha')
+        correct_captcha = request.session.get('captcha_text')
+        # if not user_input_captcha or user_input_captcha.upper() != correct_captcha:
+        # if not user_input_captcha or not correct_captcha:
+        #     return JsonResponse({'detail': 'Invalid CAPTCHA'}, status=400)
+        if not user_input_captcha or not correct_captcha or user_input_captcha != correct_captcha:
+            return JsonResponse({'detail': 'Invalid CAPTCHA'}, status=400)
+        
+        # Proceed with registration
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
             refresh = RefreshToken.for_user(user)
-            # Send welcome email
             send_signup_email(user)
             return JsonResponse(
                 {"refresh": str(refresh), "access": str(refresh.access_token)},
                 status=status.HTTP_201_CREATED,
             )
-        return JsonResponse(serializer.error, status.HTTP_400_BAD_REQUEST, safe=False)
+        return JsonResponse(serializer.errors, status=400, safe=False)
 
 class RequestPasswordResetView(APIView):
     def post(self, request):
@@ -330,8 +352,11 @@ class SignInView(APIView):
         print("Captcha entered:", user_input_captcha)
         print("Captcha expected:", correct_captcha)
         print("Session ID during login:", request.session.session_key)
-        if not user_input_captcha or user_input_captcha.lower() != (correct_captcha or '').lower():
-            return JsonResponse({'error': 'Invalid CAPTCHA'}, status=400)
+        # if not user_input_captcha or user_input_captcha.lower() != (correct_captcha or '').lower():
+        #     return JsonResponse({'error': 'Invalid CAPTCHA'}, status=400)
+        if not user_input_captcha or not correct_captcha or user_input_captcha != correct_captcha:
+            return JsonResponse({'detail': 'Invalid CAPTCHA'}, status=400)
+        
 
         # ✅ Step 2: Validate login credentials via LoginSerializer
         serializer = LoginSerializer(data=request.data)
