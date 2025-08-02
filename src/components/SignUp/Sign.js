@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -8,6 +8,7 @@ import Header from '../Header/Header';
 function Sign() {
   const [flashMessage, setFlashMessage] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [captchaImage, setCaptchaImage] = useState('');
   const navigate = useNavigate();
 
   const validationSchema = Yup.object().shape({
@@ -27,18 +28,39 @@ function Sign() {
       .required('Mobile Number is required'),
     panchyat: Yup.string().required('Panchyat Name is required'),
     village: Yup.string().required('Village Name is required'),
+    captcha: Yup.string().required('Captcha is required'),
   });
+  const fetchCaptcha = async () => {
+    try {
+      const res = await fetch('http://localhost:8000/api/generate-captcha/', {
+        credentials: 'include', // required for session to work
+      });
+      const data = await res.json();
+      setCaptchaImage(data.captcha_image);
+    } catch (err) {
+      console.error("Captcha fetch failed", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCaptcha();
+  }, []);
+
+
 
   function handleSubmit(values, { setSubmitting, resetForm }) {
     console.log(values);
-    fetch('http://127.0.0.1:8000/api/signup/', {
+    fetch('http://localhost:8000/api/signup/', {
       method: 'POST',
+      credentials: 'include',
       body: JSON.stringify(values),
       headers: {
         'Content-Type': 'application/json',
       },
     })
       .then(async (res) => {
+        const responseData = await res.json();
+
         if (res.status === 201) {
           resetForm();
           setFlashMessage('Registration successful! Redirecting...');
@@ -47,10 +69,15 @@ function Sign() {
             navigate('/');
           }, 2000);
         } else {
-           const errorData = await res.json();
-           // Display a more specific error message from the backend if available
-           setFlashMessage(errorData.detail || 'Registration failed. Please try again.');
-           setTimeout(() => setFlashMessage(null), 3000);
+          if (responseData.detail === "Invalid CAPTCHA") {
+            setFlashMessage("❌ Invalid CAPTCHA entered. Please try again.");
+            fetchCaptcha(); // Refresh CAPTCHA on failure
+          } else {
+            // Display a more specific error message from the backend if available
+            setFlashMessage(responseData.detail || 'Registration failed. Please try again.');
+          }
+
+          setTimeout(() => setFlashMessage(null), 3000);
         }
       })
       .catch((err) => {
@@ -61,6 +88,7 @@ function Sign() {
       .finally(() => {
         setSubmitting(false);
       });
+
   }
 
   return (
@@ -80,9 +108,9 @@ function Sign() {
           )}
 
           <div className="important-notes">
-             <p>
-               <strong>नोट:</strong> कृपया अपना नाम, मोबाइल नंबर, ईमेल व अन्य विवरणों को अत्यंत सावधानी पूर्वक भरें। भविष्य में परिवर्तन का कोई भी अनुरोध विचारणीय नहीं होगा।
-             </p>
+            <p>
+              <strong>नोट:</strong> कृपया अपना नाम, मोबाइल नंबर, ईमेल व अन्य विवरणों को अत्यंत सावधानी पूर्वक भरें। भविष्य में परिवर्तन का कोई भी अनुरोध विचारणीय नहीं होगा।
+            </p>
           </div>
 
           <Formik
@@ -95,6 +123,7 @@ function Sign() {
               username: '',
               panchyat: '',
               village: '',
+              captcha: '',
             }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
@@ -135,7 +164,7 @@ function Sign() {
                     <ErrorMessage name="email" component="div" className="invalid-feedback" />
                   </div>
 
-                   {/* Mobile Number Field */}
+                  {/* Mobile Number Field */}
                   <div className="form-group">
                     <label htmlFor="mobile_number">Mobile Number</label>
                     <Field
@@ -145,7 +174,7 @@ function Sign() {
                     />
                     <ErrorMessage name="mobile_number" component="div" className="invalid-feedback" />
                   </div>
-                  
+
                   {/* Panchayat Field */}
                   <div className="form-group">
                     <label htmlFor="panchyat">Panchayat / City</label>
@@ -195,7 +224,32 @@ function Sign() {
                     <ErrorMessage name="confirmPassword" component="div" className="invalid-feedback" />
                   </div>
                 </div>
-
+                <div className="form-group captcha-group">
+                  <label htmlFor="captcha">Enter CAPTCHA</label>
+                  <div className="captcha-wrapper">
+                    <Field
+                      name="captcha"
+                      type="text"
+                      className={'form-control' + (errors.captcha && touched.captcha ? ' is-invalid' : '')}
+                    />
+                    <img
+                      src={captchaImage}
+                      alt="Captcha"
+                      className="captcha-img"
+                      onClick={fetchCaptcha}
+                      title="Click to refresh"
+                    />
+                    <div style={{ textAlign: "center" }}>
+                      <button type="button"
+                      className="refresh-captcha"
+                      onClick={fetchCaptcha}>
+                      🔄 Refresh CAPTCHA
+                    </button>
+                    </div>
+                    
+                  </div>
+                  <ErrorMessage name="captcha" component="div" className="invalid-feedback" />
+                </div>
                 <div className="form-group">
                   <button type="submit" className="signup-button" disabled={isSubmitting}>
                     {isSubmitting ? 'Registering...' : 'Register'}

@@ -28,7 +28,7 @@ function App() {
         <Route path='/reception-dashboard' element={<VleLayout />} />
         <Route path='/public-dashboard' element={<VleLayout />} />
         <Route path='/dashboard' element={<Layout />} />
-        <Route path='/officer' element={<AdminLogin />} />
+        <Route path='/officer' element={<Login />} />
         <Route path='/sessionexpires' element={<SessionExpired/>}/>
         <Route path='/admindasboard' element={<Admindasboard/>}/>
         <Route path='/complaintreceipt' element={<ComplaintReceipt/>}/>

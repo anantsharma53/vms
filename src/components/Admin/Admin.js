@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 import './Admin.css'
 import Header from '../Header/Header';
 import { useNavigate } from 'react-router-dom'
-import './Admin.css'
 
 const AdminLogin = () => {
   // State variables to store input values and error messages
   const [user, setUser] = useState({
     username: "",
     password: "",
+    
   });
   const handleChange = (e) => {
     const { name, value } = e.target;

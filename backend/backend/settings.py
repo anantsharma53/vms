@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_api',
     'corsheaders',
+    'captcha',    
 ]
 SIMPLE_JWT = {
     # Set the token expiration time for access token (default is 5 minutes)
@@ -65,9 +66,31 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    
 ]
 CORS_ORIGIN_WHITELIST=[
     'http://localhost:3000',
+]
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# (Optional) Make cookie accessible over HTTP
+SESSION_COOKIE_NAME = 'vms_sessionid'
+SESSION_COOKIE_AGE = 3600  # 1 hour
+SESSION_COOKIE_SECURE = False  # True in production
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+CORS_ALLOW_CREDENTIALS = True
+
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+]
+CORS_EXPOSE_HEADERS = ['Set-Cookie']
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'authorization',
+    'x-csrftoken',
 ]
 ROOT_URLCONF = 'backend.urls'
 
